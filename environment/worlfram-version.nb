@@ -1,0 +1,107 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3587,         99]
+NotebookOptionsPosition[      3114,         82]
+NotebookOutlinePosition[      3508,         98]
+CellTagsIndexPosition[      3465,         95]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetDirectory", "@", 
+    RowBox[{"NotebookDirectory", "[", "]"}]}], ";"}], 
+  "\n"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{"\"\<wolfram-version.txt\>\"", ",", 
+   RowBox[{"StringRiffle", "[", 
+    RowBox[{
+     RowBox[{"DeleteMissing", "@", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"\"\<Wolfram Mathematica (full): \>\"", "<>", "$Version"}], 
+        ",", 
+        RowBox[{"\"\<Wolfram Mathematica: \>\"", "<>", 
+         RowBox[{"ToString", "@", "$VersionNumber"}]}], ",", 
+        RowBox[{"\"\<Wolfram Language kernel: \>\"", "<>", 
+         RowBox[{"ToString", "@", "$VersionNumber"}], "<>", "\"\<.\>\"", "<>", 
+         RowBox[{"ToString", "@", "$ReleaseNumber"}], "<>", "\"\<.0\>\""}], 
+        ",", 
+        RowBox[{"With", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"rid", "=", 
+            RowBox[{"Quiet", "@", 
+             RowBox[{"Check", "[", 
+              RowBox[{
+               RowBox[{"SystemInformation", "[", 
+                RowBox[{"\"\<Kernel\>\"", ",", "\"\<ReleaseID\>\""}], "]"}], 
+               ",", 
+               RowBox[{"Missing", "[", "\"\<NotAvailable\>\"", "]"}]}], 
+              "]"}]}]}], "}"}], ",", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"rid", "===", 
+             RowBox[{"Missing", "[", "\"\<NotAvailable\>\"", "]"}]}], ",", 
+            "Nothing", ",", 
+            RowBox[{"\"\<Release ID: \>\"", "<>", 
+             RowBox[{"ToString", "@", "rid"}]}]}], "]"}]}], "]"}], ",", 
+        RowBox[{
+        "\"\<Platform: \>\"", "<>", "$SystemID", "<>", 
+         "\"\<  (MachinePrecision=\>\"", "<>", 
+         RowBox[{"ToString", "@", "$MachinePrecision"}], "<>", "\"\<)\>\""}], 
+        ",", 
+        RowBox[{"\"\<OS: \>\"", "<>", 
+         RowBox[{"ToString", "@", "$OperatingSystem"}]}], ",", 
+        RowBox[{"\"\<Processor: \>\"", "<>", 
+         RowBox[{"ToString", "@", "$ProcessorType"}]}], ",", 
+        RowBox[{"\"\<Language/Encoding: English / \>\"", "<>", 
+         RowBox[{"ToString", "@", "$CharacterEncoding"}]}]}], "}"}]}], ",", 
+     "\"\<\\n\>\""}], "]"}], ",", "\"\<Text\>\""}], "]"}]}], "Input",
+ CellChangeTimes->{{3.9700747564007883`*^9, 3.970074757858398*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"3670baf6-eb3b-4f0e-92ac-c66e60f01b23"],
+
+Cell[BoxData["\<\"wolfram-version.txt\"\>"], "Output",
+ CellChangeTimes->{3.970074805619177*^9},
+ CellLabel->"Out[2]=",ExpressionUUID->"b823e7de-7775-45d1-b9f9-d491698dfdac"]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{12, Automatic}, {Automatic, 24}},
+FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (April 11, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"209b1863-9118-411d-abc7-be4ca2f2df0d"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 2341, 53, 346, "Input",ExpressionUUID->"3670baf6-eb3b-4f0e-92ac-c66e60f01b23"],
+Cell[2924, 77, 174, 2, 82, "Output",ExpressionUUID->"b823e7de-7775-45d1-b9f9-d491698dfdac"]
+}, Open  ]]
+}
+]
+*)
+

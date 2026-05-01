@@ -1,0 +1,8 @@
+Wolfram Mathematica (full): 13.3.0 for Mac OS X ARM (64-bit) (April 11, 2023)
+Wolfram Mathematica: 13.3
+Wolfram Language kernel: 13.3.0.0
+Release ID: 13.3.0.0 (8404360, 202304113129)
+Platform: MacOSX-ARM64  (MachinePrecision=15.9546)
+OS: MacOSX
+Processor: ARM64
+Language/Encoding: English / UTF-8
