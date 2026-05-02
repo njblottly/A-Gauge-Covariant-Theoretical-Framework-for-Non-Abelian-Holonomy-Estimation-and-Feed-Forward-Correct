@@ -1,0 +1,43 @@
+04_feedforward_correction.nb completed.
+
+Purpose:
+Validate non-Abelian feed-forward correction for both left-acting and right-acting geometric distortions.
+
+Synthetic holonomy:
+Generated from the non-Abelian connection A(t) = i [0.7 cos(t) sigma_x + 0.4 sin(2t) sigma_y + 0.2 sigma_z].
+The ODE reference is projected to the nearest unitary by polar decomposition before constructing the effective gates.
+
+Left-acting convention:
+V_eff = U_gamma V, V_corr = Uhat^dagger V_eff.
+
+Right-acting convention:
+V_eff = V U_gamma, V_corr = V_eff Uhat^dagger.
+
+Expected behavior:
+Holonomy-estimation error should decrease under mesh refinement.
+Left and right correction errors should decrease under mesh refinement.
+Correction fidelities should approach 1.
+Unitarity residuals should remain near machine precision.
+
+Fit summary:
+<|"holonomy_log_log_slope" -> -2.0085454156994187, "holonomy_estimated_order" -> 2.0085454156994187, "left_correction_log_log_slope" -> -2.0085454156911657, "left_correction_estimated_order" -> 2.0085454156911657, "right_correction_log_log_slope" -> -2.008545415707916, "right_correction_estimated_order" -> 2.008545415707916|>
+
+Reference diagnostics:
+<|"ode_reference_unitarity_error_before_polar_projection" -> 5.347411632239695*^-8, "true_holonomy_unitarity_error_after_polar_projection" -> 3.925231146709438*^-17, "target_gate_unitarity_error" -> 3.3823104336622004*^-16, "left_effective_gate_unitarity_error" -> 2.8576114088871287*^-16, "right_effective_gate_unitarity_error" -> 4.827396019292964*^-16, "true_holonomy_eigenphases" -> {-0.7013416583093253, 0.7013416583093254}, "true_holonomy_wilson_traces_r1_r2_r3" -> {1.527954358309696 + 5.551115123125783*^-17*I, 0.33464452107759485 + 0.*I, -1.016632803844724 - 1.1102230246251565*^-16*I}|>
+
+Generated files:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/04_feedforward_correction.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/04_feedforward_correction_numeric.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_holonomy_error.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_holonomy_error.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_correction_error.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_correction_error.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_correction_fidelity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_correction_fidelity.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_corrected_unitarity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_corrected_unitarity.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_holonomy_unitarity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_holonomy_unitarity.png
+
+Project root:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits

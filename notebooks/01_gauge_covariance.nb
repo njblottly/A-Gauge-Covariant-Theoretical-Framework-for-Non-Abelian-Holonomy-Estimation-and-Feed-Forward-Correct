@@ -10,17 +10,1129 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[       815,         34]
-NotebookOptionsPosition[       561,         21]
-NotebookOutlinePosition[       955,         37]
-CellTagsIndexPosition[       912,         34]
+NotebookDataLength[     46759,       1161]
+NotebookOptionsPosition[     45368,       1133]
+NotebookOutlinePosition[     45766,       1149]
+CellTagsIndexPosition[     45723,       1146]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+     "This", " ", "notebook", " ", "validates", " ", "the", " ", "closed"}], 
+     "-", 
+     RowBox[{
+     "loop", " ", "gauge", " ", "covariance", " ", "of", " ", "the", " ", 
+      "polar", " ", "holonomy", " ", 
+      RowBox[{"estimator", ".", "It"}], " ", "generates", " ", "synthetic", 
+      " ", "frame", " ", "data"}]}], ",", 
+    RowBox[{"applies", " ", "random", " ", "gauge", " ", "transformations"}], 
+    ",", 
+    RowBox[{
+    "checks", " ", "that", " ", "the", " ", "reconstructed", " ", "holonomy", 
+     " ", "transforms", " ", "by", " ", "conjugation"}], ",", 
+    RowBox[{
+    "and", " ", "exports", " ", "the", " ", "corresponding", " ", "table"}], 
+    ",", "figure", ",", 
+    RowBox[{"and", " ", "log", " ", 
+     RowBox[{"files", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], ";"}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"The", " ", "notebook", " ", "lives", " ", "in", " ", 
+      RowBox[{"notebooks", "/"}]}], ",", 
+     RowBox[{
+     "so", " ", "the", " ", "project", " ", "root", " ", "is", " ", "its", 
+      " ", 
+      RowBox[{"parent", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"rootPath", "=", 
+     RowBox[{"ParentDirectory", "[", 
+      RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Load", " ", "shared", " ", 
+      RowBox[{"tools", ".", 
+       RowBox[{"Important", ":", 
+        RowBox[{
+         RowBox[{"HolonomyTools", ".", "wl"}], " ", "clears", " ", "Global`", 
+         "*"}]}]}]}], ",", 
+     RowBox[{
+     "so", " ", "paths", " ", "must", " ", "be", " ", "defined", " ", "again",
+       " ", "after", " ", 
+      RowBox[{"Get", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SetDirectory", "[", "rootPath", "]"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Get", "[", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "rootPath", ",", "\"\<src\>\"", ",", "\"\<HolonomyTools.wl\>\""}], 
+       "}"}], "]"}], "]"}], ";"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Re", "-", 
+     RowBox[{"define", " ", "paths", " ", "after", " ", "loading", " ", 
+      RowBox[{"HolonomyTools", ".", "wl", "."}]}]}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"rootPath", "=", 
+     RowBox[{"ParentDirectory", "[", 
+      RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"SetDirectory", "[", "rootPath", "]"}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"resultsPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\""}], "}"}], "]"}]}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"tablesPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\"", ",", "\"\<tables\>\""}], 
+       "}"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"figsPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\"", ",", "\"\<figs\>\""}], 
+       "}"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"logsPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\"", ",", "\"\<logs\>\""}], 
+       "}"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Do", "[", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"DirectoryQ", "[", "dir", "]"}]}], ",", 
+        RowBox[{"CreateDirectory", "[", 
+         RowBox[{"dir", ",", 
+          RowBox[{"CreateIntermediateDirectories", "->", "True"}]}], "]"}]}], 
+       "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"dir", ",", 
+        RowBox[{"{", 
+         RowBox[{
+         "resultsPath", ",", "tablesPath", ",", "figsPath", ",", "logsPath"}],
+          "}"}]}], "}"}]}], "]"}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ClearAll", "[", 
+     RowBox[{"localExportCSV", ",", "localExportTXT", ",", "localExportFIG"}],
+      "]"}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"localExportCSV", "[", 
+      RowBox[{"name_String", ",", "data_"}], "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "path", "}"}], ",", 
+       RowBox[{
+        RowBox[{"path", "=", 
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{"tablesPath", ",", "name"}], "}"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Export", "[", 
+         RowBox[{"path", ",", "data", ",", "\"\<CSV\>\""}], "]"}], ";", 
+        "\[IndentingNewLine]", "path"}]}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"localExportTXT", "[", 
+      RowBox[{"name_String", ",", "text_String"}], "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "path", "}"}], ",", 
+       RowBox[{
+        RowBox[{"path", "=", 
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{"logsPath", ",", "name"}], "}"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Export", "[", 
+         RowBox[{"path", ",", "text", ",", "\"\<Text\>\""}], "]"}], ";", 
+        "\[IndentingNewLine]", "path"}]}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{"name_String", ",", "fig_"}], "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "path", "}"}], ",", 
+       RowBox[{
+        RowBox[{"path", "=", 
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{"figsPath", ",", "name"}], "}"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Export", "[", 
+         RowBox[{"path", ",", "fig"}], "]"}], ";", "\[IndentingNewLine]", 
+        "path"}]}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SeedRandom", "[", "12345", "]"}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Project root: \>\"", ",", "rootPath"}], "]"}], ";"}], "\n", 
+   
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Tables path:  \>\"", ",", "tablesPath"}], "]"}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Figures path: \>\"", ",", "figsPath"}], "]"}], ";"}], "\n", 
+   
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Logs path:    \>\"", ",", "logsPath"}], "]"}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Gauge", " ", "covariance", " ", "validation", " ", "data"}], 
+    "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"nList", "=", 
+     RowBox[{"{", 
+      RowBox[{"20", ",", "40", ",", "80", ",", "160", ",", "320"}], "}"}]}], 
+    ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"gaugeRows", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"Module", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+          "frames", ",", "overlaps", ",", "H", ",", "gaugeErr", ",", 
+           "unitErr", ",", "muMin", ",", "phases", ",", "traces"}], "}"}], 
+         ",", 
+         RowBox[{
+          RowBox[{"frames", "=", 
+           RowBox[{"sampledFrames", "[", "nSteps", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"overlaps", "=", 
+           RowBox[{"overlapMatrices", "[", "frames", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"H", "=", 
+           RowBox[{"discreteHolonomyFromFrames", "[", "frames", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"gaugeErr", "=", 
+           RowBox[{"gaugeCovarianceError", "[", "frames", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"unitErr", "=", 
+           RowBox[{"unitaryError", "[", "H", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"muMin", "=", 
+           RowBox[{"minOverlapSingularValue", "[", "overlaps", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"phases", "=", 
+           RowBox[{"eigenphases", "[", "H", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"traces", "=", 
+           RowBox[{"wilsonTraces", "[", 
+            RowBox[{"H", ",", "3"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"{", 
+           RowBox[{
+           "nSteps", ",", "gaugeErr", ",", "unitErr", ",", "muMin", ",", 
+            "phases", ",", "traces"}], "}"}]}]}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"nSteps", ",", "nList"}], "}"}]}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"gaugeTable", "=", 
+     RowBox[{"Prepend", "[", 
+      RowBox[{"gaugeRows", ",", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<N\>\"", ",", "\"\<gauge_covariance_error\>\"", ",", 
+         "\"\<unitarity_error\>\"", ",", "\"\<min_singular_value\>\"", ",", 
+         "\"\<eigenphases\>\"", ",", "\"\<wilson_traces_r1_r2_r3\>\""}], 
+        "}"}]}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Grid", "[", 
+    RowBox[{"gaugeTable", ",", 
+     RowBox[{"Frame", "->", "All"}], ",", 
+     RowBox[{"Alignment", "->", "Left"}], ",", 
+     RowBox[{"ItemSize", "->", "All"}]}], "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Compact", " ", "numeric", " ", "table", " ", "for", " ", "plotting"}], 
+    "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"gaugeNumericRows", "=", 
+     RowBox[{"gaugeRows", "[", 
+      RowBox[{"[", 
+       RowBox[{"All", ",", 
+        RowBox[{"{", 
+         RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}]}], "]"}], "]"}]}],
+     ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"gaugeNumericTable", "=", 
+     RowBox[{"Prepend", "[", 
+      RowBox[{"gaugeNumericRows", ",", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<N\>\"", ",", "\"\<gauge_covariance_error\>\"", ",", 
+         "\"\<unitarity_error\>\"", ",", "\"\<min_singular_value\>\""}], 
+        "}"}]}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Grid", "[", 
+    RowBox[{"gaugeNumericTable", ",", 
+     RowBox[{"Frame", "->", "All"}], ",", 
+     RowBox[{"Alignment", "->", "Left"}], ",", 
+     RowBox[{"ItemSize", "->", "All"}]}], "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{
+     "gauge", " ", "covariance", " ", "and", " ", "unitarity", " ", 
+      "residuals"}]}], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"residualPlotData", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"gaugeRows", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "2"}], "}"}]}], "]"}], "]"}], ",", 
+       RowBox[{"gaugeRows", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "3"}], "}"}]}], "]"}], "]"}]}], "}"}]}], ";"}], 
+   "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"residualPlot", "=", 
+     RowBox[{"ListLogPlot", "[", 
+      RowBox[{"residualPlotData", ",", 
+       RowBox[{"Joined", "->", "True"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Number of steps N\>\"", ",", "\"\<Residual\>\""}], 
+         "}"}]}], ",", 
+       RowBox[{"PlotLegends", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Gauge covariance residual\>\"", ",", 
+          "\"\<Unitarity residual\>\""}], "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{
+       "PlotLabel", "->", 
+        "\"\<Gauge covariance and unitarity residuals\>\""}]}], "]"}]}], 
+    ";"}], "\n", "\[IndentingNewLine]", "residualPlot", "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{"conditioning", " ", "diagnostic"}]}], "*)"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"conditioningPlot", "=", 
+     RowBox[{"ListLinePlot", "[", 
+      RowBox[{
+       RowBox[{"gaugeRows", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "4"}], "}"}]}], "]"}], "]"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Number of steps N\>\"", ",", 
+          "\"\<\\!\\(\\*SubscriptBox[\\(\[Mu]\\), \\(min\\)]\\)\>\""}], 
+         "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{
+       "PlotLabel", "->", "\"\<Minimum overlap singular value\>\""}]}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", "conditioningPlot", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Export", " ", "results"}], "*)"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"csvPathFull", "=", 
+     RowBox[{"localExportCSV", "[", 
+      RowBox[{"\"\<01_gauge_covariance.csv\>\"", ",", "gaugeTable"}], "]"}]}],
+     ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"csvPathNumeric", "=", 
+     RowBox[{"localExportCSV", "[", 
+      RowBox[{
+      "\"\<01_gauge_covariance_numeric.csv\>\"", ",", "gaugeNumericTable"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathResidualPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<01_gauge_covariance_residuals.pdf\>\"", ",", "residualPlot"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathResidualPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<01_gauge_covariance_residuals.png\>\"", ",", "residualPlot"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathConditioningPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<01_gauge_covariance_conditioning.pdf\>\"", ",", 
+       "conditioningPlot"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathConditioningPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<01_gauge_covariance_conditioning.png\>\"", ",", 
+       "conditioningPlot"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"logText", "=", 
+     RowBox[{"StringRiffle", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<01_gauge_covariance.nb completed.\>\"", ",", "\"\<\>\"", ",", 
+         "\"\<Purpose:\>\"", ",", 
+         "\"\<Validate closed-loop gauge covariance of the polar holonomy \
+estimator.\>\"", ",", "\"\<\>\"", ",", "\"\<Expected behavior:\>\"", ",", 
+         "\"\<Gauge covariance residuals should be near machine \
+precision.\>\"", ",", 
+         "\"\<Unitarity residuals should be near machine precision.\>\"", 
+         ",", "\"\<The minimum overlap singular value should remain safely \
+separated from zero.\>\"", ",", "\"\<\>\"", ",", "\"\<Generated files:\>\"", 
+         ",", "csvPathFull", ",", "csvPathNumeric", ",", "figPathResidualPDF",
+          ",", "figPathResidualPNG", ",", "figPathConditioningPDF", ",", 
+         "figPathConditioningPNG", ",", "\"\<\>\"", ",", 
+         "\"\<Project root:\>\"", ",", "rootPath"}], "}"}], ",", 
+       "\"\<\\n\>\""}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"logPath", "=", 
+     RowBox[{"localExportTXT", "[", 
+      RowBox[{"\"\<01_gauge_covariance_log.txt\>\"", ",", "logText"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Print", "[", "logText", "]"}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Final", " ", "validation", " ", "summary"}], "*)"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"summary", "=", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<max_gauge_covariance_error\>\"", "->", 
+        RowBox[{"Max", "[", 
+         RowBox[{"gaugeRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", "2"}], "]"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<max_unitarity_error\>\"", "->", 
+        RowBox[{"Max", "[", 
+         RowBox[{"gaugeRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", "3"}], "]"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<min_singular_value_over_all_runs\>\"", "->", 
+        RowBox[{"Min", "[", 
+         RowBox[{"gaugeRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", "4"}], "]"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<full_csv\>\"", "->", "csvPathFull"}], ",", 
+       RowBox[{"\"\<numeric_csv\>\"", "->", "csvPathNumeric"}], ",", 
+       RowBox[{"\"\<residual_plot_pdf\>\"", "->", "figPathResidualPDF"}], ",", 
+       RowBox[{
+       "\"\<conditioning_plot_pdf\>\"", "->", "figPathConditioningPDF"}], ",", 
+       RowBox[{"\"\<log\>\"", "->", "logPath"}]}], "|>"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", "summary"}]}]], "Input",
+ CellChangeTimes->{{3.9866020999678288`*^9, 
+  3.986602166082378*^9}},ExpressionUUID->"89590720-c1d9-4e86-9a72-\
+939e654f7f16"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Project root: \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits\"\>"}],
+  SequenceForm[
+  "Project root: ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.986602102505261*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"6e5f7c76-da60-49f9-bc49-5b3536336850"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Tables path:  \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables\"\>"}],
+  SequenceForm[
+  "Tables path:  ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9866021025064487`*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"f59f0149-1501-4dea-9a33-ca320d783a93"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Figures path: \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs\"\>"}],
+  SequenceForm[
+  "Figures path: ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.986602102507213*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"9242f2cd-7ad0-4b46-afd3-e80b2d4f45b0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Logs path:    \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/logs\"\>"}],
+  SequenceForm[
+  "Logs path:    ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/logs"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.986602102507825*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"9689d7c7-f93f-4cc1-bbcf-fa07ab9e8cec"]
+}, Open  ]],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"\<\"N\"\>", "\<\"gauge_covariance_error\"\>", \
+"\<\"unitarity_error\"\>", "\<\"min_singular_value\"\>", \
+"\<\"eigenphases\"\>", "\<\"wilson_traces_r1_r2_r3\"\>"},
+    {"20", "1.804795241946221`*^-15", "1.8987735135852577`*^-15", 
+     "0.9484642335951133`", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], 
+     RowBox[{"{", 
+      RowBox[{"2.`", ",", "2.`", ",", "2.`"}], "}"}]},
+    {"40", "3.565967081107265`*^-15", "4.454921199182045`*^-15", 
+     "0.9852443786284585`", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], 
+     RowBox[{"{", 
+      RowBox[{
+      "2.000000000000003`", ",", "2.000000000000006`", ",", 
+       "2.0000000000000093`"}], "}"}]},
+    {"80", "6.847137929252437`*^-15", "1.3716590926289478`*^-14", 
+     "0.9962270342371167`", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], 
+     RowBox[{"{", 
+      RowBox[{
+      "2.0000000000000093`", ",", "2.0000000000000187`", ",", 
+       "2.000000000000028`"}], "}"}]},
+    {"160", "9.54180670278024`*^-15", "1.4462699960145175`*^-14", 
+     "0.9990561500311405`", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], 
+     RowBox[{"{", 
+      RowBox[{
+      "1.9999999999999907`", ",", "1.9999999999999816`", ",", 
+       "1.9999999999999725`"}], "}"}]},
+    {"320", "6.227946231562644`*^-15", "1.6280248123003881`*^-15", 
+     "0.9997634179139369`", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], 
+     RowBox[{"{", 
+      RowBox[{
+      "1.9999999999999998`", ",", "1.9999999999999996`", ",", 
+       "1.9999999999999993`"}], "}"}]}
+   },
+   AutoDelete->False,
+   ColumnsEqual->True,
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+   GridBoxItemSize->{},
+   RowsEqual->True],
+  "Grid"]], "Output",
+ CellChangeTimes->{3.9866021025513163`*^9},
+ CellLabel->"Out[83]=",ExpressionUUID->"f109f635-728c-4768-b3ea-df07fc490bd6"],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"\<\"N\"\>", "\<\"gauge_covariance_error\"\>", \
+"\<\"unitarity_error\"\>", "\<\"min_singular_value\"\>"},
+    {"20", "1.804795241946221`*^-15", "1.8987735135852577`*^-15", 
+     "0.9484642335951133`"},
+    {"40", "3.565967081107265`*^-15", "4.454921199182045`*^-15", 
+     "0.9852443786284585`"},
+    {"80", "6.847137929252437`*^-15", "1.3716590926289478`*^-14", 
+     "0.9962270342371167`"},
+    {"160", "9.54180670278024`*^-15", "1.4462699960145175`*^-14", 
+     "0.9990561500311405`"},
+    {"320", "6.227946231562644`*^-15", "1.6280248123003881`*^-15", 
+     "0.9997634179139369`"}
+   },
+   AutoDelete->False,
+   ColumnsEqual->True,
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+   GridBoxItemSize->{},
+   RowsEqual->True],
+  "Grid"]], "Output",
+ CellChangeTimes->{3.9866021025522127`*^9},
+ CellLabel->"Out[86]=",ExpressionUUID->"c7df4735-0da9-4ad8-bf35-ef2a763342be"],
+
+Cell[BoxData[
+ TemplateBox[{
+   GraphicsBox[{{}, {{{}, {}, {
+        Hue[0.67, 0.6, 0.6], 
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{20., -33.948329248925546`}, {40., -33.26734110683392}, {
+         80., -32.61494565049497}, {160., -32.28309354553817}, {
+         320., -32.709729774315534`}}]}, {
+        Hue[0.9060679774997897, 0.6, 0.6], 
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{20., -33.897568236341144`}, {40., -33.04476702231898}, {
+         80., -31.920170278248158`}, {160., -31.867203476374446`}, {
+         320., -34.05140888647573}}]}}, {{
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               DiskBox[{0, 0}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[0.012833333333333334`], 
+                 RGBColor[0.368417, 0.506779, 0.709798], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.272]], {{{20., -33.948329248925546`}}, {{
+         40., -33.26734110683392}}, {{80., -32.61494565049497}}, {{
+         160., -32.28309354553817}}, {{320., -32.709729774315534`}}}]}, {
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               PolygonBox[{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[0.012833333333333334`], 
+                 RGBColor[0.880722, 0.611041, 0.142051], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.72]], {{{20., -33.897568236341144`}}, {{
+         40., -33.04476702231898}}, {{80., -31.920170278248158`}}, {{
+         160., -31.867203476374446`}}, {{
+         320., -34.05140888647573}}}]}}}, {{}, {}}}, {
+    DisplayFunction -> Identity, GridLines -> {Automatic, 
+       Charting`ScaledTickValues[{Log, Exp}]}, DisplayFunction -> Identity, 
+     DisplayFunction -> Identity, DisplayFunction -> Identity, 
+     DisplayFunction -> Identity, AspectRatio -> 
+     NCache[GoldenRatio^(-1), 0.6180339887498948], Axes -> {True, True}, 
+     AxesLabel -> {None, None}, AxesOrigin -> {0, -34.222335355247026`}, 
+     DisplayFunction :> Identity, Frame -> {{True, True}, {True, True}}, 
+     FrameLabel -> {{
+        FormBox[
+         TagBox["\"Residual\"", HoldForm], TraditionalForm], None}, {
+        FormBox[
+         TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}}, 
+     FrameTicks -> {{
+        Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+         15.954589770191003`, RotateLabel -> 0], 
+        Charting`ScaledFrameTicks[{Log, Exp}]}, {Automatic, Automatic}}, 
+     GridLines -> {Automatic, 
+       Charting`ScaledTickValues[{Log, Exp}]}, GridLinesStyle -> Directive[
+       GrayLevel[0.5, 0.4]], ImageSize -> Large, 
+     Method -> {
+      "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+       "DefaultGraphicsInteraction" -> {
+        "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+         "Effects" -> {
+          "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+           "Droplines" -> {
+            "freeformCursorMode" -> True, 
+             "placement" -> {"x" -> "All", "y" -> "None"}}}}, 
+       "DefaultMeshStyle" -> AbsolutePointSize[6], "DefaultPlotStyle" -> {
+         Directive[
+          RGBColor[0.368417, 0.506779, 0.709798], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.880722, 0.611041, 0.142051], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.560181, 0.691569, 0.194885], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.922526, 0.385626, 0.209179], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.528488, 0.470624, 0.701351], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.772079, 0.431554, 0.102387], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.363898, 0.618501, 0.782349], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[1, 0.75, 0], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.647624, 0.37816, 0.614037], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.571589, 0.586483, 0.], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.915, 0.3325, 0.2125], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[
+          0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+          AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+       "PointSizeFunction" -> "SmallPointSize", "RangePadding" -> 
+       Scaled[0.05], "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> 
+       True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+           Identity[
+            Part[#, 1]], 
+           Exp[
+            Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+           Identity[
+            Part[#, 1]], 
+           Exp[
+            Part[#, 2]]}& )}}, PlotLabel -> 
+     FormBox["\"Gauge covariance and unitarity residuals\"", TraditionalForm],
+      PlotRange -> {{0, 320.}, {-34.222335355247026`, -31.867203476374446`}}, 
+     PlotRangeClipping -> True, PlotRangePadding -> {{
+        Scaled[0.02], 
+        Scaled[0.02]}, {
+        Scaled[0.02], 
+        Scaled[0.05]}}, Ticks -> {Automatic, 
+       Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+        15.954589770191003`, RotateLabel -> 0]}}], 
+   FormBox[
+    FormBox[
+     TemplateBox[{"\"Gauge covariance residual\"", "\"Unitarity residual\""}, 
+      "PointLegend", DisplayFunction -> (FormBox[
+        StyleBox[
+         StyleBox[
+          PaneBox[
+           TagBox[
+            GridBox[{{
+               TagBox[
+                GridBox[{{
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #}, {
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #2}}, 
+                 GridBoxAlignment -> {
+                  "Columns" -> {Center, Left}, "Rows" -> {{Baseline}}}, 
+                 AutoDelete -> False, 
+                 GridBoxDividers -> {
+                  "Columns" -> {{False}}, "Rows" -> {{False}}}, 
+                 GridBoxItemSize -> {"Columns" -> {{All}}, "Rows" -> {{All}}},
+                  GridBoxSpacings -> {
+                  "Columns" -> {{0.5}}, "Rows" -> {{0.8}}}], "Grid"]}}, 
+             GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+             AutoDelete -> False, 
+             GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{1}}, "Rows" -> {{0}}}], 
+            "Grid"], Alignment -> Left, AppearanceElements -> None, 
+           ImageMargins -> {{5, 5}, {5, 5}}, ImageSizeAction -> 
+           "ResizeToFit"], LineIndent -> 0, StripOnInput -> False], {
+         FontFamily -> "Arial"}, Background -> Automatic, StripOnInput -> 
+         False], TraditionalForm]& ), 
+      InterpretationFunction :> (RowBox[{"PointLegend", "[", 
+         RowBox[{
+           RowBox[{"{", 
+             RowBox[{
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", "0.012833333333333334`", "]"}], 
+                   ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.368417, 0.506779, 0.709798]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}], 
+               ",", 
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", "0.012833333333333334`", "]"}], 
+                   ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.880722, 0.611041, 0.142051]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}]}],
+              "}"}], ",", 
+           RowBox[{"{", 
+             RowBox[{#, ",", #2}], "}"}], ",", 
+           RowBox[{"LegendMarkers", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"{", 
+                 RowBox[{
+                   GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}], ",", 
+                   RowBox[{"Offset", "[", "6.272`", "]"}]}], "}"}], "}"}]}], 
+           ",", 
+           RowBox[{"Joined", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"True", ",", "True"}], "}"}]}], ",", 
+           RowBox[{"LabelStyle", "\[Rule]", 
+             RowBox[{"{", "}"}]}], ",", 
+           RowBox[{"LegendLayout", "\[Rule]", "\"Column\""}]}], "]"}]& ), 
+      Editable -> True], TraditionalForm], TraditionalForm]},
+  "Legended",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"], 
+      ItemBox[#2, DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, GridBoxItemSize -> Automatic, 
+    BaselinePosition -> {1, 1}]& ),
+  Editable->True,
+  InterpretationFunction->(RowBox[{"Legended", "[", 
+     RowBox[{#, ",", 
+       RowBox[{"Placed", "[", 
+         RowBox[{#2, ",", "After"}], "]"}]}], "]"}]& )]], "Output",
+ CellChangeTimes->{3.986602102577471*^9},
+ CellLabel->"Out[89]=",ExpressionUUID->"27c5dbe9-d3b3-4785-a678-7d0d70b0d0cf"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {{{}, {}, 
+     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+       NCache[
+        Rational[7, 360], 0.019444444444444445`]], AbsoluteThickness[1.6], 
+      LineBox[{{20., 0.9484642335951133}, {40., 0.9852443786284585}, {80., 
+       0.9962270342371167}, {160., 0.9990561500311405}, {320., 
+       0.9997634179139369}}]}}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+      NCache[
+       Rational[7, 360], 0.019444444444444445`]], AbsoluteThickness[1.6], 
+     GeometricTransformationBox[InsetBox[
+       FormBox[
+        StyleBox[
+         GraphicsBox[
+          {EdgeForm[None], DiskBox[{0, 0}]}],
+         StripOnInput->False,
+         GraphicsBoxOptions->{DefaultBaseStyle->Directive[
+           PointSize[
+            Rational[7, 360]], 
+           RGBColor[0.368417, 0.506779, 0.709798], 
+           AbsoluteThickness[1.6]]}],
+        TraditionalForm], {0., 0.}, Automatic, Offset[6.272]], {{{20., 
+      0.9484642335951133}}, {{40., 0.9852443786284585}}, {{80., 
+      0.9962270342371167}}, {{160., 0.9990561500311405}}, {{320., 
+      0.9997634179139369}}}]}}, {{}, {}}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{None, None},
+  AxesOrigin->{0, 0.9456142789107366},
+  DisplayFunction->Identity,
+  Frame->{{True, True}, {True, True}},
+  FrameLabel->{{
+     FormBox[
+      TagBox[
+      "\"\\!\\(\\*SubscriptBox[\\(\[Mu]\\), \\(min\\)]\\)\"", HoldForm], 
+      TraditionalForm], None}, {
+     FormBox[
+      TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{Automatic, Automatic},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  ImageSize->Large,
+  Method->{
+   "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "DefaultMeshStyle" -> 
+    AbsolutePointSize[6], "DefaultPlotStyle" -> {
+      Directive[
+       RGBColor[0.368417, 0.506779, 0.709798], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.880722, 0.611041, 0.142051], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.560181, 0.691569, 0.194885], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.922526, 0.385626, 0.209179], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.528488, 0.470624, 0.701351], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.772079, 0.431554, 0.102387], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.363898, 0.618501, 0.782349], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[1, 0.75, 0], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.647624, 0.37816, 0.614037], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.571589, 0.586483, 0.], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.915, 0.3325, 0.2125], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+       AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+    "RangePadding" -> Scaled[0.05], "OptimizePlotMarkers" -> True, 
+    "OptimizePlotMarkers" -> True, 
+    "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+        Identity[
+         Part[#, 1]], 
+        Identity[
+         Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+        Identity[
+         Part[#, 1]], 
+        Identity[
+         Part[#, 2]]}& )}},
+  PlotLabel->FormBox["\"Minimum overlap singular value\"", TraditionalForm],
+  PlotRange->{{0, 320.}, {0.9456142789107366, 0.9997634179139369}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.05], 
+     Scaled[0.05]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{3.986602102598096*^9},
+ CellLabel->"Out[91]=",ExpressionUUID->"bb95f754-cd70-4703-9b1e-20306e0aae17"],
+
+Cell[BoxData["\<\"01_gauge_covariance.nb completed.\\n\\nPurpose:\\nValidate \
+closed-loop gauge covariance of the polar holonomy estimator.\\n\\nExpected \
+behavior:\\nGauge covariance residuals should be near machine \
+precision.\\nUnitarity residuals should be near machine precision.\\nThe \
+minimum overlap singular value should remain safely separated from \
+zero.\\n\\nGenerated \
+files:\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-\
+and-feed-forward-for-time-bin-qudits/results/tables/01_gauge_covariance.csv\\\
+n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-\
+forward-for-time-bin-qudits/results/tables/01_gauge_covariance_numeric.csv\\n/\
+Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-\
+forward-for-time-bin-qudits/results/figs/01_gauge_covariance_residuals.pdf\\n/\
+Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-\
+forward-for-time-bin-qudits/results/figs/01_gauge_covariance_residuals.png\\n/\
+Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-\
+forward-for-time-bin-qudits/results/figs/01_gauge_covariance_conditioning.pdf\
+\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_\
+conditioning.png\\n\\nProject \
+root:\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-\
+and-feed-forward-for-time-bin-qudits\"\>"], "Print",
+ CellChangeTimes->{3.986602103055922*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"0922992a-1507-4eca-8437-c1aec5a8c765"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"max_gauge_covariance_error\"\>", "\[Rule]", 
+    "9.54180670278024`*^-15"}], ",", 
+   RowBox[{"\<\"max_unitarity_error\"\>", "\[Rule]", 
+    "1.4462699960145175`*^-14"}], ",", 
+   RowBox[{"\<\"min_singular_value_over_all_runs\"\>", "\[Rule]", 
+    "0.9484642335951133`"}], ",", 
+   RowBox[{"\<\"full_csv\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables/01_gauge_covariance.csv\"\>"}]\
+, ",", 
+   RowBox[{"\<\"numeric_csv\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables/01_gauge_covariance_numeric.\
+csv\"\>"}], ",", 
+   RowBox[{"\<\"residual_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_residuals.\
+pdf\"\>"}], ",", 
+   RowBox[{"\<\"conditioning_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_\
+conditioning.pdf\"\>"}], ",", 
+   RowBox[{"\<\"log\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/logs/01_gauge_covariance_log.txt\"\>\
+"}]}], "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.986602103056938*^9},
+ CellLabel->
+  "Out[102]=",ExpressionUUID->"b593865a-22d3-4ca6-9543-a42012d95c62"]
+}, Open  ]]
 },
-WindowSize->{808, 911},
-WindowMargins->{{20, Automatic}, {Automatic, 44}},
+WindowSize->{808, 1180},
+WindowMargins->{{Automatic, -1182}, {Automatic, 46}},
 FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (April 11, 2023)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"ce2f974c-2c08-4497-8403-cb1735ffcfb9"
@@ -36,9 +1148,22 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 17553, 448, 2950, "Input",ExpressionUUID->"89590720-c1d9-4e86-9a72-939e654f7f16"],
+Cell[CellGroupData[{
+Cell[18158, 474, 542, 14, 63, "Print",ExpressionUUID->"6e5f7c76-da60-49f9-bc49-5b3536336850"],
+Cell[18703, 490, 574, 14, 63, "Print",ExpressionUUID->"f59f0149-1501-4dea-9a33-ca320d783a93"],
+Cell[19280, 506, 568, 14, 63, "Print",ExpressionUUID->"9242f2cd-7ad0-4b46-afd3-e80b2d4f45b0"],
+Cell[19851, 522, 568, 14, 63, "Print",ExpressionUUID->"9689d7c7-f93f-4cc1-bbcf-fa07ab9e8cec"]
+}, Open  ]],
+Cell[20434, 539, 1939, 52, 141, "Output",ExpressionUUID->"f109f635-728c-4768-b3ea-df07fc490bd6"],
+Cell[22376, 593, 971, 23, 141, "Output",ExpressionUUID->"c7df4735-0da9-4ad8-bf35-ef2a763342be"],
+Cell[23350, 618, 14131, 326, 384, "Output",ExpressionUUID->"27c5dbe9-d3b3-4785-a678-7d0d70b0d0cf"],
+Cell[37484, 946, 4604, 120, 397, "Output",ExpressionUUID->"bb95f754-cd70-4703-9b1e-20306e0aae17"],
+Cell[42091, 1068, 1626, 24, 519, "Print",ExpressionUUID->"0922992a-1507-4eca-8437-c1aec5a8c765"],
+Cell[43720, 1094, 1632, 36, 332, "Output",ExpressionUUID->"b593865a-22d3-4ca6-9543-a42012d95c62"]
+}, Open  ]]
 }
 ]
 *)
-
-(* End of internal cache information *)
 

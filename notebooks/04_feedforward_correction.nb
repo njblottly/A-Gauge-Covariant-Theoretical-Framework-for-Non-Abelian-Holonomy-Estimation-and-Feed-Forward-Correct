@@ -1,0 +1,3500 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    147025,       3492]
+NotebookOptionsPosition[    145122,       3459]
+NotebookOutlinePosition[    145520,       3475]
+CellTagsIndexPosition[    145477,       3472]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"04", "\[LongDash]", 
+    RowBox[{"Feed", "-", 
+     RowBox[{"Forward", " ", "Correction", " ", "Validation"}]}]}], "*)"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+     "This", " ", "notebook", " ", "validates", " ", "the", " ", "non"}], "-", 
+     RowBox[{"Abelian", " ", "feed"}], "-", 
+     RowBox[{"forward", " ", "correction", " ", 
+      RowBox[{"rule", ".", "It"}], " ", "constructs", " ", "a", " ", 
+      "synthetic", " ", "target", " ", "logical", " ", "gate", " ", "V"}]}], 
+    ",", 
+    RowBox[{
+    "a", " ", "synthetic", " ", "geometric", " ", "holonomy", " ", 
+     "U_gamma"}], ",", 
+    RowBox[{
+     RowBox[{"and", " ", "effective", " ", "gates", " ", "V_eff"}], "=", 
+     RowBox[{
+      RowBox[{"U_gamma", " ", "V", " ", "and", " ", "V_eff"}], "=", 
+      RowBox[{"V", " ", 
+       RowBox[{"U_gamma", ".", "It"}], " ", "then", " ", "uses", " ", 
+       "estimated", " ", "holonomies", " ", "Uhat_N", " ", "to", " ", 
+       "correct", " ", "the", " ", "effective", " ", "gates", " ", "and", " ",
+        "checks", " ", "that", " ", "the", " ", "corrected", " ", 
+       "operations", " ", "converge", " ", "back", " ", "to", " ", "the", " ",
+        "intended", " ", "target", " ", 
+       RowBox[{"gate", "."}]}]}]}]}], "*)"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", "Initialization", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"rootPath", "=", 
+     RowBox[{"ParentDirectory", "[", 
+      RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SetDirectory", "[", "rootPath", "]"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Get", "[", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "rootPath", ",", "\"\<src\>\"", ",", "\"\<HolonomyTools.wl\>\""}], 
+       "}"}], "]"}], "]"}], ";"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"HolonomyTools", ".", "wl"}], " ", "clears", " ", "Global`", 
+      "*"}], ",", 
+     RowBox[{
+      RowBox[{"so", " ", "re"}], "-", 
+      RowBox[{"define", " ", "paths", " ", "after", " ", 
+       RowBox[{"loading", "."}]}]}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"rootPath", "=", 
+     RowBox[{"ParentDirectory", "[", 
+      RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"SetDirectory", "[", "rootPath", "]"}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"resultsPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\""}], "}"}], "]"}]}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"tablesPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\"", ",", "\"\<tables\>\""}], 
+       "}"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"figsPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\"", ",", "\"\<figs\>\""}], 
+       "}"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"logsPath", "=", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"rootPath", ",", "\"\<results\>\"", ",", "\"\<logs\>\""}], 
+       "}"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Do", "[", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"DirectoryQ", "[", "dir", "]"}]}], ",", 
+        RowBox[{"CreateDirectory", "[", 
+         RowBox[{"dir", ",", 
+          RowBox[{"CreateIntermediateDirectories", "->", "True"}]}], "]"}]}], 
+       "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"dir", ",", 
+        RowBox[{"{", 
+         RowBox[{
+         "resultsPath", ",", "tablesPath", ",", "figsPath", ",", "logsPath"}],
+          "}"}]}], "}"}]}], "]"}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ClearAll", "[", 
+     RowBox[{"localExportCSV", ",", "localExportTXT", ",", "localExportFIG"}],
+      "]"}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"localExportCSV", "[", 
+      RowBox[{"name_String", ",", "data_"}], "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "path", "}"}], ",", 
+       RowBox[{
+        RowBox[{"path", "=", 
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{"tablesPath", ",", "name"}], "}"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Export", "[", 
+         RowBox[{"path", ",", "data", ",", "\"\<CSV\>\""}], "]"}], ";", 
+        "\[IndentingNewLine]", "path"}]}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"localExportTXT", "[", 
+      RowBox[{"name_String", ",", "text_String"}], "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "path", "}"}], ",", 
+       RowBox[{
+        RowBox[{"path", "=", 
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{"logsPath", ",", "name"}], "}"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Export", "[", 
+         RowBox[{"path", ",", "text", ",", "\"\<Text\>\""}], "]"}], ";", 
+        "\[IndentingNewLine]", "path"}]}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{"name_String", ",", "fig_"}], "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", "path", "}"}], ",", 
+       RowBox[{
+        RowBox[{"path", "=", 
+         RowBox[{"FileNameJoin", "[", 
+          RowBox[{"{", 
+           RowBox[{"figsPath", ",", "name"}], "}"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Export", "[", 
+         RowBox[{"path", ",", "fig"}], "]"}], ";", "\[IndentingNewLine]", 
+        "path"}]}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SeedRandom", "[", "45678", "]"}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Project root: \>\"", ",", "rootPath"}], "]"}], ";"}], "\n", 
+   
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Tables path:  \>\"", ",", "tablesPath"}], "]"}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Figures path: \>\"", ",", "figsPath"}], "]"}], ";"}], "\n", 
+   
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\"\<Logs path:    \>\"", ",", "logsPath"}], "]"}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Synthetic", " ", "target", " ", "gate", " ", "and", " ", "reference", 
+     " ", "holonomy"}], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"We", " ", "use", " ", "the", " ", "synthetic", " ", "non"}], 
+       "-", 
+       RowBox[{"Abelian", " ", "connection", " ", "from", " ", 
+        RowBox[{"HolonomyTools", ".", 
+         RowBox[{"wl", ":", 
+          RowBox[{"syntheticConnection", "[", "t_", "]"}]}]}]}]}], "=", 
+      RowBox[{"I", " ", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"0.7", " ", 
+           RowBox[{"Cos", "[", "t", "]"}], " ", "sigmaX"}], "+", 
+          RowBox[{"0.4", " ", 
+           RowBox[{"Sin", "[", 
+            RowBox[{"2", " ", "t"}], "]"}], " ", "sigmaY"}], "+", 
+          RowBox[{"0.2", " ", "sigmaZ"}]}], ")"}], ".", "The"}], " ", 
+       "continuum", " ", "ODE", " ", "solution", " ", "has", " ", "a", " ", 
+       "small", " ", "numerical", " ", "unitarity", " ", "error"}]}], ",", 
+     RowBox[{
+      RowBox[{
+      "so", " ", "we", " ", "project", " ", "it", " ", "to", " ", "the", " ", 
+       "nearest", " ", "unitary", " ", "using", " ", 
+       RowBox[{"polarUnitary", ".", "This"}], " ", "gives", " ", "a", " ", 
+       "clean", " ", "unitary", " ", "reference", " ", "holonomy", " ", "for",
+        " ", "the", " ", "feed"}], "-", 
+      RowBox[{"forward", " ", "correction", " ", 
+       RowBox[{"test", "."}]}]}]}], "*)"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Hode", "=", 
+     RowBox[{"continuumHolonomy", "[", 
+      RowBox[{"2", " ", "Pi"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Htrue", "=", 
+     RowBox[{"polarUnitary", "[", "Hode", "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"m", "=", "2"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Vtarget", "=", 
+     RowBox[{"randomUnitary", "[", "m", "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"VeffLeft", "=", 
+     RowBox[{"Htrue", ".", "Vtarget"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"VeffRight", "=", 
+     RowBox[{"Vtarget", ".", "Htrue"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   
+   RowBox[{
+    RowBox[{"referenceDiagnostics", "=", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{
+       "\"\<ode_reference_unitarity_error_before_polar_projection\>\"", "->", 
+        
+        RowBox[{"unitaryError", "[", "Hode", "]"}]}], ",", 
+       RowBox[{
+       "\"\<true_holonomy_unitarity_error_after_polar_projection\>\"", "->", 
+        RowBox[{"unitaryError", "[", "Htrue", "]"}]}], ",", 
+       RowBox[{"\"\<target_gate_unitarity_error\>\"", "->", 
+        RowBox[{"unitaryError", "[", "Vtarget", "]"}]}], ",", 
+       RowBox[{"\"\<left_effective_gate_unitarity_error\>\"", "->", 
+        RowBox[{"unitaryError", "[", "VeffLeft", "]"}]}], ",", 
+       RowBox[{"\"\<right_effective_gate_unitarity_error\>\"", "->", 
+        RowBox[{"unitaryError", "[", "VeffRight", "]"}]}], ",", 
+       RowBox[{"\"\<true_holonomy_eigenphases\>\"", "->", 
+        RowBox[{"eigenphases", "[", "Htrue", "]"}]}], ",", 
+       RowBox[{"\"\<true_holonomy_wilson_traces_r1_r2_r3\>\"", "->", 
+        RowBox[{"wilsonTraces", "[", 
+         RowBox[{"Htrue", ",", "3"}], "]"}]}]}], "|>"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", "referenceDiagnostics", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Feed", "-", 
+     RowBox[{"forward", " ", "correction", " ", "data"}]}], "*)"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"nList", "=", 
+     RowBox[{"{", 
+      RowBox[{
+      "10", ",", "20", ",", "40", ",", "80", ",", "160", ",", "320", ",", 
+       "640", ",", "1280"}], "}"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctionRows", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"Module", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+          "Hhat", ",", "holErr", ",", "hhatUnitErr", ",", "VcorrLeft", ",", 
+           "VcorrRight", ",", "leftErr", ",", "rightErr", ",", "leftFid", ",",
+            "rightFid", ",", "leftUnitErr", ",", "rightUnitErr", ",", 
+           "hhatPhases"}], "}"}], ",", 
+         RowBox[{
+          RowBox[{"Hhat", "=", 
+           RowBox[{"discreteFromConnection", "[", "nSteps", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"holErr", "=", 
+           RowBox[{"frobeniusError", "[", 
+            RowBox[{"Hhat", ",", "Htrue"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"hhatUnitErr", "=", 
+           RowBox[{"unitaryError", "[", "Hhat", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"hhatPhases", "=", 
+           RowBox[{"eigenphases", "[", "Hhat", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Left", "-", 
+              RowBox[{"acting", " ", 
+               RowBox[{"convention", ":", "V_eff"}]}]}], "=", 
+             RowBox[{"U_gamma", " ", "V"}]}], ",", 
+            RowBox[{"V_corr", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Uhat", "^"}], "\\", "dagger"}], " ", 
+              RowBox[{"V_eff", "."}]}]}]}], "*)"}], 
+          RowBox[{"VcorrLeft", "=", 
+           RowBox[{
+            RowBox[{"ConjugateTranspose", "[", "Hhat", "]"}], ".", 
+            "VeffLeft"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Right", "-", 
+              RowBox[{"acting", " ", 
+               RowBox[{"convention", ":", "V_eff"}]}]}], "=", 
+             RowBox[{"V", " ", "U_gamma"}]}], ",", 
+            RowBox[{"V_corr", "=", 
+             RowBox[{"V_eff", " ", 
+              RowBox[{
+               RowBox[{"Uhat", "^"}], "\\", 
+               RowBox[{"dagger", "."}]}]}]}]}], "*)"}], 
+          RowBox[{"VcorrRight", "=", 
+           RowBox[{"VeffRight", ".", 
+            RowBox[{"ConjugateTranspose", "[", "Hhat", "]"}]}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"leftErr", "=", 
+           RowBox[{"frobeniusError", "[", 
+            RowBox[{"VcorrLeft", ",", "Vtarget"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"rightErr", "=", 
+           RowBox[{"frobeniusError", "[", 
+            RowBox[{"VcorrRight", ",", "Vtarget"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"leftFid", "=", 
+           RowBox[{"gateFidelity", "[", 
+            RowBox[{"VcorrLeft", ",", "Vtarget"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"rightFid", "=", 
+           RowBox[{"gateFidelity", "[", 
+            RowBox[{"VcorrRight", ",", "Vtarget"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"leftUnitErr", "=", 
+           RowBox[{"unitaryError", "[", "VcorrLeft", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"rightUnitErr", "=", 
+           RowBox[{"unitaryError", "[", "VcorrRight", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"{", 
+           RowBox[{
+           "nSteps", ",", "holErr", ",", "hhatUnitErr", ",", "leftErr", ",", 
+            "leftFid", ",", "leftUnitErr", ",", "rightErr", ",", "rightFid", 
+            ",", "rightUnitErr", ",", "hhatPhases"}], "}"}]}]}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"nSteps", ",", "nList"}], "}"}]}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctionTable", "=", 
+     RowBox[{"Prepend", "[", 
+      RowBox[{"correctionRows", ",", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<N\>\"", ",", "\"\<holonomy_frobenius_error\>\"", ",", 
+         "\"\<estimated_holonomy_unitarity_error\>\"", ",", 
+         "\"\<left_correction_error\>\"", ",", 
+         "\"\<left_correction_fidelity\>\"", ",", 
+         "\"\<left_corrected_unitarity_error\>\"", ",", 
+         "\"\<right_correction_error\>\"", ",", 
+         "\"\<right_correction_fidelity\>\"", ",", 
+         "\"\<right_corrected_unitarity_error\>\"", ",", 
+         "\"\<estimated_holonomy_eigenphases\>\""}], "}"}]}], "]"}]}], ";"}], 
+   "\n", "\[IndentingNewLine]", 
+   RowBox[{"Grid", "[", 
+    RowBox[{"correctionTable", ",", 
+     RowBox[{"Frame", "->", "All"}], ",", 
+     RowBox[{"Alignment", "->", "Left"}], ",", 
+     RowBox[{"ItemSize", "->", "All"}]}], "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Compact", " ", "numeric", " ", "table", " ", "for", " ", "plotting"}], 
+    "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctionNumericRows", "=", 
+     RowBox[{"correctionRows", "[", 
+      RowBox[{"[", 
+       RowBox[{"All", ",", 
+        RowBox[{"{", 
+         RowBox[{
+         "1", ",", "2", ",", "3", ",", "4", ",", "5", ",", "6", ",", "7", ",",
+           "8", ",", "9"}], "}"}]}], "]"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctionNumericTable", "=", 
+     RowBox[{"Prepend", "[", 
+      RowBox[{"correctionNumericRows", ",", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<N\>\"", ",", "\"\<holonomy_frobenius_error\>\"", ",", 
+         "\"\<estimated_holonomy_unitarity_error\>\"", ",", 
+         "\"\<left_correction_error\>\"", ",", 
+         "\"\<left_correction_fidelity\>\"", ",", 
+         "\"\<left_corrected_unitarity_error\>\"", ",", 
+         "\"\<right_correction_error\>\"", ",", 
+         "\"\<right_correction_fidelity\>\"", ",", 
+         "\"\<right_corrected_unitarity_error\>\""}], "}"}]}], "]"}]}], ";"}],
+    "\n", "\[IndentingNewLine]", 
+   RowBox[{"Grid", "[", 
+    RowBox[{"correctionNumericTable", ",", 
+     RowBox[{"Frame", "->", "All"}], ",", 
+     RowBox[{"Alignment", "->", "Left"}], ",", 
+     RowBox[{"ItemSize", "->", "All"}]}], "]"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Estimate", " ", "correction", " ", "convergence", " ", "slopes"}], 
+    "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"leftFitRows", "=", 
+     RowBox[{"Select", "[", 
+      RowBox[{"correctionNumericRows", ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"NumericQ", "[", 
+          RowBox[{"#", "[", 
+           RowBox[{"[", "4", "]"}], "]"}], "]"}], "&&", 
+         RowBox[{
+          RowBox[{"#", "[", 
+           RowBox[{"[", "4", "]"}], "]"}], ">", "0"}]}], "&"}]}], "]"}]}], 
+    ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"rightFitRows", "=", 
+     RowBox[{"Select", "[", 
+      RowBox[{"correctionNumericRows", ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"NumericQ", "[", 
+          RowBox[{"#", "[", 
+           RowBox[{"[", "7", "]"}], "]"}], "]"}], "&&", 
+         RowBox[{
+          RowBox[{"#", "[", 
+           RowBox[{"[", "7", "]"}], "]"}], ">", "0"}]}], "&"}]}], "]"}]}], 
+    ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"holFitRows", "=", 
+     RowBox[{"Select", "[", 
+      RowBox[{"correctionNumericRows", ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"NumericQ", "[", 
+          RowBox[{"#", "[", 
+           RowBox[{"[", "2", "]"}], "]"}], "]"}], "&&", 
+         RowBox[{
+          RowBox[{"#", "[", 
+           RowBox[{"[", "2", "]"}], "]"}], ">", "0"}]}], "&"}]}], "]"}]}], 
+    ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"leftFitData", "=", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], "]"}], ",", 
+          RowBox[{"Log", "[", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", "4", "]"}], "]"}], "]"}]}], "}"}], "&"}], "/@", 
+       "leftFitRows"}], ")"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"rightFitData", "=", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], "]"}], ",", 
+          RowBox[{"Log", "[", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", "7", "]"}], "]"}], "]"}]}], "}"}], "&"}], "/@", 
+       "rightFitRows"}], ")"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"holFitData", "=", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], "]"}], ",", 
+          RowBox[{"Log", "[", 
+           RowBox[{"#", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], "]"}]}], "}"}], "&"}], "/@", 
+       "holFitRows"}], ")"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"leftLinearFit", "=", 
+     RowBox[{"LinearModelFit", "[", 
+      RowBox[{"leftFitData", ",", "x", ",", "x"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"rightLinearFit", "=", 
+     RowBox[{"LinearModelFit", "[", 
+      RowBox[{"rightFitData", ",", "x", ",", "x"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"holLinearFit", "=", 
+     RowBox[{"LinearModelFit", "[", 
+      RowBox[{"holFitData", ",", "x", ",", "x"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"leftCorrectionSlope", "=", 
+     RowBox[{
+      RowBox[{"leftLinearFit", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+      RowBox[{"[", "2", "]"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"rightCorrectionSlope", "=", 
+     RowBox[{
+      RowBox[{"rightLinearFit", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+      
+      RowBox[{"[", "2", "]"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"holonomySlope", "=", 
+     RowBox[{
+      RowBox[{"holLinearFit", "[", "\"\<BestFitParameters\>\"", "]"}], "[", 
+      RowBox[{"[", "2", "]"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fitSummary", "=", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<holonomy_log_log_slope\>\"", "->", "holonomySlope"}], ",", 
+       RowBox[{"\"\<holonomy_estimated_order\>\"", "->", 
+        RowBox[{"-", "holonomySlope"}]}], ",", 
+       RowBox[{
+       "\"\<left_correction_log_log_slope\>\"", "->", "leftCorrectionSlope"}],
+        ",", 
+       RowBox[{"\"\<left_correction_estimated_order\>\"", "->", 
+        RowBox[{"-", "leftCorrectionSlope"}]}], ",", 
+       RowBox[{
+       "\"\<right_correction_log_log_slope\>\"", "->", 
+        "rightCorrectionSlope"}], ",", 
+       RowBox[{"\"\<right_correction_estimated_order\>\"", "->", 
+        RowBox[{"-", "rightCorrectionSlope"}]}]}], "|>"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", "fitSummary", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{"holonomy", "-", 
+      RowBox[{"estimation", " ", "error"}]}]}], "*)"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"holonomyErrorPlot", "=", 
+     RowBox[{"ListLogLogPlot", "[", 
+      RowBox[{
+       RowBox[{"correctionNumericRows", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "2"}], "}"}]}], "]"}], "]"}], ",", 
+       RowBox[{"Joined", "->", "True"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Number of steps N\>\"", ",", 
+          "\"\<Holonomy Frobenius error\>\""}], "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{"PlotLabel", "->", "\"\<Holonomy-estimation error\>\""}]}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", "holonomyErrorPlot", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{"correction", " ", "error"}]}], "*)"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctionErrorPlot", "=", 
+     RowBox[{"ListLogLogPlot", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"correctionNumericRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "4"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"correctionNumericRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "7"}], "}"}]}], "]"}], "]"}]}], "}"}], ",", 
+       RowBox[{"Joined", "->", "True"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Number of steps N\>\"", ",", "\"\<Correction error\>\""}], 
+         "}"}]}], ",", 
+       RowBox[{"PlotLegends", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Left-acting correction\>\"", ",", 
+          "\"\<Right-acting correction\>\""}], "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{"PlotLabel", "->", "\"\<Feed-forward correction error\>\""}]}],
+       "]"}]}], ";"}], "\n", "\[IndentingNewLine]", "correctionErrorPlot", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{"correction", " ", "fidelity"}]}], "*)"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctionFidelityPlot", "=", 
+     RowBox[{"ListLinePlot", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"correctionNumericRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "5"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"correctionNumericRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "8"}], "}"}]}], "]"}], "]"}]}], "}"}], ",", 
+       RowBox[{"Joined", "->", "True"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Number of steps N\>\"", ",", "\"\<Correction fidelity\>\""}], 
+         "}"}]}], ",", 
+       RowBox[{"PlotLegends", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Left-acting correction\>\"", ",", 
+          "\"\<Right-acting correction\>\""}], "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{"PlotRange", "->", 
+        RowBox[{"{", 
+         RowBox[{"Automatic", ",", 
+          RowBox[{"{", 
+           RowBox[{"0.99", ",", "1.000001"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{
+       "PlotLabel", "->", "\"\<Feed-forward correction fidelity\>\""}]}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", "correctionFidelityPlot", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{"corrected", "-", 
+      RowBox[{"gate", " ", "unitarity", " ", "residual"}]}]}], "*)"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"correctedUnitarityPlot", "=", 
+     RowBox[{"ListLogPlot", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"correctionNumericRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "6"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"correctionNumericRows", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "9"}], "}"}]}], "]"}], "]"}]}], "}"}], ",", 
+       RowBox[{"Joined", "->", "True"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Number of steps N\>\"", ",", 
+          "\"\<Corrected-gate unitarity residual\>\""}], "}"}]}], ",", 
+       RowBox[{"PlotLegends", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Left corrected gate\>\"", ",", "\"\<Right corrected gate\>\""}],
+          "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{
+       "PlotLabel", "->", "\"\<Corrected-gate unitarity residual\>\""}]}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", "correctedUnitarityPlot", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Plot", ":", 
+     RowBox[{
+     "estimated", " ", "holonomy", " ", "unitarity", " ", "residual"}]}], 
+    "*)"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"holonomyUnitarityPlot", "=", 
+     RowBox[{"ListLogPlot", "[", 
+      RowBox[{
+       RowBox[{"correctionNumericRows", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "3"}], "}"}]}], "]"}], "]"}], ",", 
+       RowBox[{"Joined", "->", "True"}], ",", 
+       RowBox[{"PlotMarkers", "->", "Automatic"}], ",", 
+       RowBox[{"Frame", "->", "True"}], ",", 
+       RowBox[{"FrameLabel", "->", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Number of steps N\>\"", ",", 
+          "\"\<Estimated holonomy unitarity residual\>\""}], "}"}]}], ",", 
+       RowBox[{"GridLines", "->", "Automatic"}], ",", 
+       RowBox[{"ImageSize", "->", "Large"}], ",", 
+       RowBox[{
+       "PlotLabel", "->", "\"\<Estimated holonomy unitarity residual\>\""}]}],
+       "]"}]}], ";"}], "\n", "\[IndentingNewLine]", "holonomyUnitarityPlot", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Export", " ", "results"}], "*)"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"csvPathFull", "=", 
+     RowBox[{"localExportCSV", "[", 
+      RowBox[{
+      "\"\<04_feedforward_correction.csv\>\"", ",", "correctionTable"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"csvPathNumeric", "=", 
+     RowBox[{"localExportCSV", "[", 
+      RowBox[{
+      "\"\<04_feedforward_correction_numeric.csv\>\"", ",", 
+       "correctionNumericTable"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathHolonomyErrorPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_holonomy_error.pdf\>\"", ",", "holonomyErrorPlot"}],
+       "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathHolonomyErrorPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_holonomy_error.png\>\"", ",", "holonomyErrorPlot"}],
+       "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathCorrectionErrorPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_correction_error.pdf\>\"", ",", 
+       "correctionErrorPlot"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathCorrectionErrorPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_correction_error.png\>\"", ",", 
+       "correctionErrorPlot"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathCorrectionFidelityPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_correction_fidelity.pdf\>\"", ",", 
+       "correctionFidelityPlot"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathCorrectionFidelityPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_correction_fidelity.png\>\"", ",", 
+       "correctionFidelityPlot"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathCorrectedUnitarityPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_corrected_unitarity.pdf\>\"", ",", 
+       "correctedUnitarityPlot"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathCorrectedUnitarityPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_corrected_unitarity.png\>\"", ",", 
+       "correctedUnitarityPlot"}], "]"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathHolonomyUnitarityPDF", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_holonomy_unitarity.pdf\>\"", ",", 
+       "holonomyUnitarityPlot"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"figPathHolonomyUnitarityPNG", "=", 
+     RowBox[{"localExportFIG", "[", 
+      RowBox[{
+      "\"\<04_feedforward_holonomy_unitarity.png\>\"", ",", 
+       "holonomyUnitarityPlot"}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"logText", "=", 
+     RowBox[{"StringRiffle", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<04_feedforward_correction.nb completed.\>\"", ",", "\"\<\>\"", 
+         ",", "\"\<Purpose:\>\"", ",", 
+         "\"\<Validate non-Abelian feed-forward correction for both \
+left-acting and right-acting geometric distortions.\>\"", ",", "\"\<\>\"", 
+         ",", "\"\<Synthetic holonomy:\>\"", ",", 
+         "\"\<Generated from the non-Abelian connection A(t) = i [0.7 cos(t) \
+sigma_x + 0.4 sin(2t) sigma_y + 0.2 sigma_z].\>\"", ",", 
+         "\"\<The ODE reference is projected to the nearest unitary by polar \
+decomposition before constructing the effective gates.\>\"", ",", "\"\<\>\"", 
+         ",", "\"\<Left-acting convention:\>\"", ",", 
+         "\"\<V_eff = U_gamma V, V_corr = Uhat^dagger V_eff.\>\"", ",", 
+         "\"\<\>\"", ",", "\"\<Right-acting convention:\>\"", ",", 
+         "\"\<V_eff = V U_gamma, V_corr = V_eff Uhat^dagger.\>\"", ",", 
+         "\"\<\>\"", ",", "\"\<Expected behavior:\>\"", ",", 
+         "\"\<Holonomy-estimation error should decrease under mesh \
+refinement.\>\"", ",", 
+         "\"\<Left and right correction errors should decrease under mesh \
+refinement.\>\"", ",", "\"\<Correction fidelities should approach 1.\>\"", 
+         ",", "\"\<Unitarity residuals should remain near machine \
+precision.\>\"", ",", "\"\<\>\"", ",", "\"\<Fit summary:\>\"", ",", 
+         RowBox[{"ToString", "[", 
+          RowBox[{"fitSummary", ",", "InputForm"}], "]"}], ",", "\"\<\>\"", 
+         ",", "\"\<Reference diagnostics:\>\"", ",", 
+         RowBox[{"ToString", "[", 
+          RowBox[{"referenceDiagnostics", ",", "InputForm"}], "]"}], ",", 
+         "\"\<\>\"", ",", "\"\<Generated files:\>\"", ",", "csvPathFull", ",",
+          "csvPathNumeric", ",", "figPathHolonomyErrorPDF", ",", 
+         "figPathHolonomyErrorPNG", ",", "figPathCorrectionErrorPDF", ",", 
+         "figPathCorrectionErrorPNG", ",", "figPathCorrectionFidelityPDF", 
+         ",", "figPathCorrectionFidelityPNG", ",", 
+         "figPathCorrectedUnitarityPDF", ",", "figPathCorrectedUnitarityPNG", 
+         ",", "figPathHolonomyUnitarityPDF", ",", 
+         "figPathHolonomyUnitarityPNG", ",", "\"\<\>\"", ",", 
+         "\"\<Project root:\>\"", ",", "rootPath"}], "}"}], ",", 
+       "\"\<\\n\>\""}], "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"logPath", "=", 
+     RowBox[{"localExportTXT", "[", 
+      RowBox[{"\"\<04_feedforward_correction_log.txt\>\"", ",", "logText"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Print", "[", "logText", "]"}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Final", " ", "validation", " ", "summary"}], "*)"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"summary", "=", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{
+       "\"\<ode_reference_unitarity_error_before_polar_projection\>\"", "->", 
+        
+        RowBox[{
+        "referenceDiagnostics", "[", 
+         "\"\<ode_reference_unitarity_error_before_polar_projection\>\"", 
+         "]"}]}], ",", 
+       RowBox[{
+       "\"\<true_holonomy_unitarity_error_after_polar_projection\>\"", "->", 
+        RowBox[{
+        "referenceDiagnostics", "[", 
+         "\"\<true_holonomy_unitarity_error_after_polar_projection\>\"", 
+         "]"}]}], ",", 
+       RowBox[{"\"\<initial_holonomy_error\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "2"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<final_holonomy_error\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "2"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<initial_left_correction_error\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "4"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<final_left_correction_error\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "4"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<initial_left_correction_fidelity\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "5"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<final_left_correction_fidelity\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "5"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<initial_right_correction_error\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "7"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<final_right_correction_error\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "7"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<initial_right_correction_fidelity\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "8"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<final_right_correction_fidelity\>\"", "->", 
+        RowBox[{"correctionRows", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "8"}], "]"}], "]"}]}], ",", 
+       RowBox[{"\"\<holonomy_estimated_order\>\"", "->", 
+        RowBox[{"-", "holonomySlope"}]}], ",", 
+       RowBox[{"\"\<left_correction_estimated_order\>\"", "->", 
+        RowBox[{"-", "leftCorrectionSlope"}]}], ",", 
+       RowBox[{"\"\<right_correction_estimated_order\>\"", "->", 
+        RowBox[{"-", "rightCorrectionSlope"}]}], ",", 
+       RowBox[{"\"\<full_csv\>\"", "->", "csvPathFull"}], ",", 
+       RowBox[{"\"\<numeric_csv\>\"", "->", "csvPathNumeric"}], ",", 
+       RowBox[{
+       "\"\<holonomy_error_plot_pdf\>\"", "->", "figPathHolonomyErrorPDF"}], 
+       ",", 
+       RowBox[{
+       "\"\<correction_error_plot_pdf\>\"", "->", 
+        "figPathCorrectionErrorPDF"}], ",", 
+       RowBox[{
+       "\"\<correction_fidelity_plot_pdf\>\"", "->", 
+        "figPathCorrectionFidelityPDF"}], ",", 
+       RowBox[{
+       "\"\<corrected_unitarity_plot_pdf\>\"", "->", 
+        "figPathCorrectedUnitarityPDF"}], ",", 
+       RowBox[{
+       "\"\<holonomy_unitarity_plot_pdf\>\"", "->", 
+        "figPathHolonomyUnitarityPDF"}], ",", 
+       RowBox[{"\"\<log\>\"", "->", "logPath"}]}], "|>"}]}], ";"}], "\n", 
+   "\[IndentingNewLine]", "summary"}]}]], "Input",
+ CellChangeTimes->{{3.986669427542583*^9, 3.9866694275449953`*^9}, {
+  3.986669583284727*^9, 
+  3.986669673089507*^9}},ExpressionUUID->"e3625213-42b9-4503-a6ef-\
+93e1050ca83f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Project root: \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits\"\>"}],
+  SequenceForm[
+  "Project root: ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.98666942898454*^9},
+ CellLabel->
+  "During evaluation of \
+In[742]:=",ExpressionUUID->"dc8dcd65-17a6-4829-81a9-b5e166c9e4d2"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Tables path:  \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables\"\>"}],
+  SequenceForm[
+  "Tables path:  ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9866694289859533`*^9},
+ CellLabel->
+  "During evaluation of \
+In[742]:=",ExpressionUUID->"44823ea8-5eac-41d1-842e-37b4c4218d73"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Figures path: \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs\"\>"}],
+  SequenceForm[
+  "Figures path: ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.986669428986663*^9},
+ CellLabel->
+  "During evaluation of \
+In[742]:=",ExpressionUUID->"07abd3c1-6cdf-4ad1-a901-e1569b02c638"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Logs path:    \"\>", 
+   "\[InvisibleSpace]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/logs\"\>"}],
+  SequenceForm[
+  "Logs path:    ", 
+   "/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/logs"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9866694289872217`*^9},
+ CellLabel->
+  "During evaluation of \
+In[742]:=",ExpressionUUID->"374821ff-ebbd-4ae1-9f75-02b42cabac48"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"ode_reference_unitarity_error_before_polar_projection\"\>", 
+    "\[Rule]", "5.347411632239695`*^-8"}], ",", 
+   RowBox[{"\<\"true_holonomy_unitarity_error_after_polar_projection\"\>", 
+    "\[Rule]", "3.925231146709438`*^-17"}], ",", 
+   RowBox[{"\<\"target_gate_unitarity_error\"\>", "\[Rule]", 
+    "3.3823104336622004`*^-16"}], ",", 
+   RowBox[{"\<\"left_effective_gate_unitarity_error\"\>", "\[Rule]", 
+    "2.8576114088871287`*^-16"}], ",", 
+   RowBox[{"\<\"right_effective_gate_unitarity_error\"\>", "\[Rule]", 
+    "4.827396019292964`*^-16"}], ",", 
+   RowBox[{"\<\"true_holonomy_eigenphases\"\>", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "0.7013416583093253`"}], ",", "0.7013416583093254`"}], 
+     "}"}]}], ",", 
+   RowBox[{"\<\"true_holonomy_wilson_traces_r1_r2_r3\"\>", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"1.527954358309696`", "\[VeryThinSpace]", "+", 
+       RowBox[{"5.551115123125783`*^-17", " ", "\[ImaginaryI]"}]}], ",", 
+      RowBox[{"0.33464452107759485`", "\[VeryThinSpace]", "+", 
+       RowBox[{"0.`", " ", "\[ImaginaryI]"}]}], ",", 
+      RowBox[{
+       RowBox[{"-", "1.016632803844724`"}], "-", 
+       RowBox[{"1.1102230246251565`*^-16", " ", "\[ImaginaryI]"}]}]}], 
+     "}"}]}]}], "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.986669428999234*^9},
+ CellLabel->
+  "Out[769]=",ExpressionUUID->"70e6718c-45c0-4a3a-aabc-99c6e0d99bef"],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"\<\"N\"\>", "\<\"holonomy_frobenius_error\"\>", \
+"\<\"estimated_holonomy_unitarity_error\"\>", \
+"\<\"left_correction_error\"\>", "\<\"left_correction_fidelity\"\>", \
+"\<\"left_corrected_unitarity_error\"\>", "\<\"right_correction_error\"\>", "\
+\<\"right_correction_fidelity\"\>", \
+"\<\"right_corrected_unitarity_error\"\>", \
+"\<\"estimated_holonomy_eigenphases\"\>"},
+    {"10", "0.01566177125422161`", "6.389813363550566`*^-16", 
+     "0.01566177125422166`", "0.9998773582210715`", "8.820859921416069`*^-16",
+      "0.015661771254221548`", "0.9998773582210717`", 
+     "8.750712804614062`*^-16", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.710409339175189`"}], ",", "0.7104093391751889`"}], 
+      "}"}]},
+    {"20", "0.0037725574170611367`", "2.3128906185831588`*^-15", 
+     "0.0037725574170611436`", "0.9999928839179253`", 
+     "2.6709604452329875`*^-15", "0.0037725574170611106`", 
+     "0.9999928839179251`", "2.982207118426112`*^-15", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.7036022505119301`"}], ",", "0.70360225051193`"}], 
+      "}"}]},
+    {"40", "0.0009357243827068428`", "2.7152273987852913`*^-15", 
+     "0.0009357243827069012`", "0.9999995622099884`", 
+     "2.232987377039681`*^-15", "0.0009357243827068188`", 
+     "0.9999995622099884`", "2.434909185329438`*^-15", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.7019063008230265`"}], ",", "0.7019063008230264`"}], 
+      "}"}]},
+    {"80", "0.0002334784430295238`", "6.431632274743855`*^-15", 
+     "0.0002334784430295324`", "0.999999972743904`", 
+     "6.691367911952185`*^-15", "0.0002334784430294289`", 
+     "0.9999999727439037`", "6.7295681201916086`*^-15", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.7014827829724481`"}], ",", "0.7014827829724487`"}], 
+      "}"}]},
+    {"160", "0.000058332758633378`", "4.643068966264981`*^-15", 
+     "0.000058332758633450666`", "0.9999999982986418`", 
+     "4.944895525683957`*^-15", "0.0000583327586332935`", 
+     "0.9999999982986421`", "4.700454054877079`*^-15", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.70137693391461`"}], ",", "0.7013769339146096`"}], 
+      "}"}]},
+    {"320", "0.000014572108038613179`", "1.3576761169784532`*^-14", 
+     "0.00001457210803862407`", "0.9999999998938354`", 
+     "1.3510908464898931`*^-14", "0.000014572108038633194`", 
+     "0.9999999998938354`", "1.340482240879487`*^-14", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.7013504735670759`"}], ",", "0.7013504735670758`"}], 
+      "}"}]},
+    {"640", "3.6338259624088524`*^-6", "1.7565398417188503`*^-14", 
+     "3.6338259624135073`*^-6", "0.999999999993392`", 
+     "1.7806710618979925`*^-14", "3.6338259624073947`*^-6", 
+     "0.999999999993392`", "1.7749554974443022`*^-14", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.70134385860026`"}], ",", "0.701343858600259`"}], "}"}]},
+    {"1280", "9.004842008081888`*^-7", "3.248080745794277`*^-14", 
+     "9.004842008687451`*^-7", "0.999999999999615`", 
+     "3.240577266816114`*^-14", "9.004842007443491`*^-7", 
+     "0.9999999999996152`", "3.239954957233488`*^-14", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "0.701342204866064`"}], ",", "0.7013422048660639`"}], 
+      "}"}]}
+   },
+   AutoDelete->False,
+   ColumnsEqual->True,
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+   GridBoxItemSize->{},
+   RowsEqual->True],
+  "Grid"]], "Output",
+ CellChangeTimes->{3.9866694290539503`*^9},
+ CellLabel->
+  "Out[773]=",ExpressionUUID->"c525e3c9-9628-4bcd-8192-c4a7ed2eb0b5"],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"\<\"N\"\>", "\<\"holonomy_frobenius_error\"\>", \
+"\<\"estimated_holonomy_unitarity_error\"\>", \
+"\<\"left_correction_error\"\>", "\<\"left_correction_fidelity\"\>", \
+"\<\"left_corrected_unitarity_error\"\>", "\<\"right_correction_error\"\>", "\
+\<\"right_correction_fidelity\"\>", "\<\"right_corrected_unitarity_error\"\>"},
+    {"10", "0.01566177125422161`", "6.389813363550566`*^-16", 
+     "0.01566177125422166`", "0.9998773582210715`", "8.820859921416069`*^-16",
+      "0.015661771254221548`", "0.9998773582210717`", 
+     "8.750712804614062`*^-16"},
+    {"20", "0.0037725574170611367`", "2.3128906185831588`*^-15", 
+     "0.0037725574170611436`", "0.9999928839179253`", 
+     "2.6709604452329875`*^-15", "0.0037725574170611106`", 
+     "0.9999928839179251`", "2.982207118426112`*^-15"},
+    {"40", "0.0009357243827068428`", "2.7152273987852913`*^-15", 
+     "0.0009357243827069012`", "0.9999995622099884`", 
+     "2.232987377039681`*^-15", "0.0009357243827068188`", 
+     "0.9999995622099884`", "2.434909185329438`*^-15"},
+    {"80", "0.0002334784430295238`", "6.431632274743855`*^-15", 
+     "0.0002334784430295324`", "0.999999972743904`", 
+     "6.691367911952185`*^-15", "0.0002334784430294289`", 
+     "0.9999999727439037`", "6.7295681201916086`*^-15"},
+    {"160", "0.000058332758633378`", "4.643068966264981`*^-15", 
+     "0.000058332758633450666`", "0.9999999982986418`", 
+     "4.944895525683957`*^-15", "0.0000583327586332935`", 
+     "0.9999999982986421`", "4.700454054877079`*^-15"},
+    {"320", "0.000014572108038613179`", "1.3576761169784532`*^-14", 
+     "0.00001457210803862407`", "0.9999999998938354`", 
+     "1.3510908464898931`*^-14", "0.000014572108038633194`", 
+     "0.9999999998938354`", "1.340482240879487`*^-14"},
+    {"640", "3.6338259624088524`*^-6", "1.7565398417188503`*^-14", 
+     "3.6338259624135073`*^-6", "0.999999999993392`", 
+     "1.7806710618979925`*^-14", "3.6338259624073947`*^-6", 
+     "0.999999999993392`", "1.7749554974443022`*^-14"},
+    {"1280", "9.004842008081888`*^-7", "3.248080745794277`*^-14", 
+     "9.004842008687451`*^-7", "0.999999999999615`", 
+     "3.240577266816114`*^-14", "9.004842007443491`*^-7", 
+     "0.9999999999996152`", "3.239954957233488`*^-14"}
+   },
+   AutoDelete->False,
+   ColumnsEqual->True,
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxFrame->{"Columns" -> {{True}}, "Rows" -> {{True}}},
+   GridBoxItemSize->{},
+   RowsEqual->True],
+  "Grid"]], "Output",
+ CellChangeTimes->{3.986669429055037*^9},
+ CellLabel->
+  "Out[776]=",ExpressionUUID->"b5f78739-4111-4057-a08a-5524544ee534"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"holonomy_log_log_slope\"\>", "\[Rule]", 
+    RowBox[{"-", "2.0085454156994187`"}]}], ",", 
+   RowBox[{"\<\"holonomy_estimated_order\"\>", "\[Rule]", 
+    "2.0085454156994187`"}], ",", 
+   RowBox[{"\<\"left_correction_log_log_slope\"\>", "\[Rule]", 
+    RowBox[{"-", "2.0085454156911657`"}]}], ",", 
+   RowBox[{"\<\"left_correction_estimated_order\"\>", "\[Rule]", 
+    "2.0085454156911657`"}], ",", 
+   RowBox[{"\<\"right_correction_log_log_slope\"\>", "\[Rule]", 
+    RowBox[{"-", "2.008545415707916`"}]}], ",", 
+   RowBox[{"\<\"right_correction_estimated_order\"\>", "\[Rule]", 
+    "2.008545415707916`"}]}], "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.986669429063406*^9},
+ CellLabel->
+  "Out[790]=",ExpressionUUID->"883c9ad5-b06d-4527-96e6-7137aca300a0"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {{{}, {}, 
+     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+      0.012833333333333334`], AbsoluteThickness[1.6], 
+      LineBox[{{2.302585092994046, -4.156532487904881}, {
+       2.995732273553991, -5.58000214754117}, {
+       3.6888794541139363`, -6.97418958776944}, {
+       4.382026634673881, -8.362420806189878}, {
+       5.075173815233827, -9.749346724756636}, {
+       5.768320995793772, -11.136401264721561`}, {
+       6.461468176353717, -12.525224480604146`}, {
+       7.154615356913663, -13.92033321739471}}]}}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`],
+      AbsoluteThickness[1.6], GeometricTransformationBox[InsetBox[
+       FormBox[
+        StyleBox[
+         GraphicsBox[
+          {EdgeForm[None], DiskBox[{0, 0}]}],
+         StripOnInput->False,
+         GraphicsBoxOptions->{DefaultBaseStyle->Directive[
+           PointSize[0.012833333333333334`], 
+           RGBColor[0.368417, 0.506779, 0.709798], 
+           AbsoluteThickness[1.6]]}],
+        TraditionalForm], {0., 0.}, Automatic, Offset[6.272]], {{{
+      2.302585092994046, -4.156532487904881}}, {{
+      2.995732273553991, -5.58000214754117}}, {{
+      3.6888794541139363`, -6.97418958776944}}, {{
+      4.382026634673881, -8.362420806189878}}, {{
+      5.075173815233827, -9.749346724756636}}, {{
+      5.768320995793772, -11.136401264721561`}}, {{
+      6.461468176353717, -12.525224480604146`}}, {{
+      7.154615356913663, -13.92033321739471}}}]}}, {{}, {}}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{None, None},
+  AxesOrigin->{2.0983112494175735`, -14.68440603433803},
+  DisplayFunction->Identity,
+  Frame->{{True, True}, {True, True}},
+  FrameLabel->{{
+     FormBox[
+      TagBox["\"Holonomy Frobenius error\"", HoldForm], TraditionalForm], 
+     None}, {
+     FormBox[
+      TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}},
+  FrameTicks->FrontEndValueCache[{{
+      Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+       15.954589770191003`, RotateLabel -> 0], 
+      Charting`ScaledFrameTicks[{Log, Exp}]}, {
+      Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+       15.954589770191003`, RotateLabel -> 0], 
+      Charting`ScaledFrameTicks[{Log, Exp}]}}, {{{{-13.815510557964274`, 
+        FormBox[
+         TemplateBox[{"10", 
+           RowBox[{"-", "6"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
+         TraditionalForm], {0.01, 0.}}, {-11.512925464970229`, 
+        FormBox[
+         TemplateBox[{"10", 
+           RowBox[{"-", "5"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
+         TraditionalForm], {0.01, 0.}}, {-9.210340371976182, 
+        FormBox[
+         TemplateBox[{"10", 
+           RowBox[{"-", "4"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
+         TraditionalForm], {0.01, 0.}}, {-6.907755278982137, 
+        FormBox["0.001`", TraditionalForm], {0.01, 0.}}, {-4.605170185988091, 
+        
+        FormBox[
+         TagBox[
+          InterpretationBox[
+           StyleBox["\"0.010\"", ShowStringCharacters -> False], 
+           0.01`15.954589770191003, AutoDelete -> True], NumberForm[#, {
+            DirectedInfinity[1], 3}]& ], TraditionalForm], {0.01, 
+        0.}}, {-18.420680743952367`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-17.72753356339242, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-17.322068455284256`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-17.034386382832476`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.811242831518264`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.62892127472431, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.474770594897052`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.34123920227253, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.223456166616145`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.11809565095832, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-15.424948470398375`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-15.01948336229021, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.73180128983843, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.508657738524219`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.326336181730264`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.172185501903007`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.038654109278484`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-13.9208710736221, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-13.122363377404328`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.716898269296165`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.429216196844383`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.206072645530174`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.02375108873622, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-11.86960040890896, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-11.736069016284437`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-11.618285980628055`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-10.819778284410283`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-10.41431317630212, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-10.126631103850338`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.903487552536127, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.721165995742174, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.567015315914915, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.433483923290392, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.315700887634009, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-8.517193191416238, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-8.111728083308073, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.824046010856292, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.600902459542082, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.418580902748128, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.264430222920869, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.1308988302963465`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.013115794639964, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-6.214608098422191, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.809142990314028, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.521460917862246, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.298317366548036, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.115995809754082, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-4.961845129926823, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-4.8283137373023015`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-4.710530701645918, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-3.912023005428146, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-3.506557897319982, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-3.2188758248682006`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.995732273553991, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.8134107167600364`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.659260036932778, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.5257286443082556`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.4079456086518722`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.3025850929940455`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}}, {{-13.815510557964274`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 
+        0.}}, {-11.512925464970229`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 
+        0.}}, {-9.210340371976182, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 
+        0.}}, {-6.907755278982137, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 
+        0.}}, {-4.605170185988091, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 
+        0.}}, {-18.420680743952367`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-17.72753356339242, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-17.322068455284256`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-17.034386382832476`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.811242831518264`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.62892127472431, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.474770594897052`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.34123920227253, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.223456166616145`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-16.11809565095832, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-15.424948470398375`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-15.01948336229021, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.73180128983843, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.508657738524219`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.326336181730264`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.172185501903007`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-14.038654109278484`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-13.9208710736221, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-13.122363377404328`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.716898269296165`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.429216196844383`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.206072645530174`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-12.02375108873622, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-11.86960040890896, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-11.736069016284437`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-11.618285980628055`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-10.819778284410283`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-10.41431317630212, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-10.126631103850338`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.903487552536127, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.721165995742174, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.567015315914915, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.433483923290392, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-9.315700887634009, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-8.517193191416238, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-8.111728083308073, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.824046010856292, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.600902459542082, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.418580902748128, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.264430222920869, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.1308988302963465`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-7.013115794639964, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-6.214608098422191, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.809142990314028, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.521460917862246, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.298317366548036, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-5.115995809754082, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-4.961845129926823, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-4.8283137373023015`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-4.710530701645918, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-3.912023005428146, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-3.506557897319982, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-3.2188758248682006`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.995732273553991, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.8134107167600364`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.659260036932778, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.5257286443082556`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.4079456086518722`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 
+        0.}}, {-2.3025850929940455`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}}}, {{{
+       2.302585092994046, 
+        FormBox["10", TraditionalForm], {0.01, 0.}}, {3.912023005428146, 
+        FormBox["50", TraditionalForm], {0.01, 0.}}, {4.605170185988092, 
+        FormBox["100", TraditionalForm], {0.01, 0.}}, {6.214608098422191, 
+        FormBox["500", TraditionalForm], {0.01, 0.}}, {6.907755278982137, 
+        FormBox["1000", TraditionalForm], {0.01, 0.}}, {0., 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       0.6931471805599453, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.0986122886681098`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.3862943611198906`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.6094379124341003`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.791759469228055, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.9459101490553132`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       2.0794415416798357`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       2.1972245773362196`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       2.995732273553991, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       3.4011973816621555`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       3.6888794541139363`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.0943445622221, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.248495242049359, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.382026634673881, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.499809670330265, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       5.298317366548036, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       5.703782474656201, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       5.991464547107982, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.396929655216146, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.551080335043404, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.684611727667927, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.802394763324311, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       7.600902459542082, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.006367567650246, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.294049640102028, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.517193191416238, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.699514748210191, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.85366542803745, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.987196820661973, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       9.104979856318357, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       9.210340371976184, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}}, {{
+       2.302585092994046, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 0.}}, {
+       3.912023005428146, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 0.}}, {
+       4.605170185988092, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 0.}}, {
+       6.214608098422191, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 0.}}, {
+       6.907755278982137, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.01, 0.}}, {0., 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       0.6931471805599453, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.0986122886681098`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.3862943611198906`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.6094379124341003`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.791759469228055, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       1.9459101490553132`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       2.0794415416798357`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       2.1972245773362196`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       2.995732273553991, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       3.4011973816621555`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       3.6888794541139363`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.0943445622221, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.248495242049359, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.382026634673881, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       4.499809670330265, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       5.298317366548036, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       5.703782474656201, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       5.991464547107982, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.396929655216146, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.551080335043404, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.684611727667927, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       6.802394763324311, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       7.600902459542082, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.006367567650246, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.294049640102028, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.517193191416238, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.699514748210191, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.85366542803745, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       8.987196820661973, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       9.104979856318357, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}, {
+       9.210340371976184, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], TraditionalForm], {0.005, 0.}}}}}],
+  GridLines->FrontEndValueCache[{
+     Charting`ScaledTickValues[{Log, Exp}], 
+     Charting`ScaledTickValues[{Log, Exp}]}, {{{2.302585092994046, 
+       Directive[]}, {3.912023005428146, 
+       Directive[]}, {4.605170185988092, 
+       Directive[]}, {6.214608098422191, 
+       Directive[]}, {6.907755278982137, 
+       Directive[]}}, {{-13.815510557964274`, 
+       Directive[]}, {-11.512925464970229`, 
+       Directive[]}, {-9.210340371976182, 
+       Directive[]}, {-6.907755278982137, 
+       Directive[]}, {-4.605170185988091, 
+       Directive[]}}}],
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  ImageSize->Large,
+  Method->{
+   "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "DefaultMeshStyle" -> 
+    AbsolutePointSize[6], "DefaultPlotStyle" -> {
+      Directive[
+       RGBColor[0.368417, 0.506779, 0.709798], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.880722, 0.611041, 0.142051], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.560181, 0.691569, 0.194885], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.922526, 0.385626, 0.209179], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.528488, 0.470624, 0.701351], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.772079, 0.431554, 0.102387], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.363898, 0.618501, 0.782349], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[1, 0.75, 0], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.647624, 0.37816, 0.614037], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.571589, 0.586483, 0.], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.915, 0.3325, 0.2125], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+       AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+    "PointSizeFunction" -> "SmallPointSize", "RangePadding" -> Scaled[0.05], 
+    "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, 
+    "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+        Exp[
+         Part[#, 1]], 
+        Exp[
+         Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+        Exp[
+         Part[#, 1]], 
+        Exp[
+         Part[#, 2]]}& )}},
+  PlotLabel->FormBox["\"Holonomy-estimation error\"", TraditionalForm],
+  PlotRange->{{2.0983112494175735`, 
+   7.154615356913663}, {-14.68440603433803, -4.156532487904881}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.05]}},
+  Ticks->{
+    Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+     15.954589770191003`, RotateLabel -> 0], 
+    Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+     15.954589770191003`, RotateLabel -> 0]}]], "Output",
+ CellChangeTimes->{3.9866694290757027`*^9},
+ CellLabel->
+  "Out[792]=",ExpressionUUID->"8cc785b8-4be0-4b67-aded-b1903a1bba7a"],
+
+Cell[BoxData[
+ TemplateBox[{
+   GraphicsBox[{{}, {{{}, {}, {
+        Hue[0.67, 0.6, 0.6], 
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{2.302585092994046, -4.156532487904878}, {
+         2.995732273553991, -5.580002147541168}, {
+         3.6888794541139363`, -6.974189587769378}, {
+         4.382026634673881, -8.36242080618984}, {
+         5.075173815233827, -9.749346724755389}, {
+         5.768320995793772, -11.136401264720813`}, {
+         6.461468176353717, -12.525224480602866`}, {
+         7.154615356913663, -13.92033321732746}}]}, {
+        Hue[0.9060679774997897, 0.6, 0.6], 
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{2.302585092994046, -4.156532487904885}, {
+         2.995732273553991, -5.580002147541177}, {
+         3.6888794541139363`, -6.974189587769466}, {
+         4.382026634673881, -8.362420806190284}, {
+         5.075173815233827, -9.749346724758084}, {
+         5.768320995793772, -11.136401264720188`}, {
+         6.461468176353717, -12.525224480604548`}, {
+         7.154615356913663, -13.920333217465604`}}]}}, {{
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               DiskBox[{0, 0}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[0.012833333333333334`], 
+                 RGBColor[0.368417, 0.506779, 0.709798], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.272]], {{{2.302585092994046, -4.156532487904878}}, {{
+         2.995732273553991, -5.580002147541168}}, {{
+         3.6888794541139363`, -6.974189587769378}}, {{
+         4.382026634673881, -8.36242080618984}}, {{
+         5.075173815233827, -9.749346724755389}}, {{
+         5.768320995793772, -11.136401264720813`}}, {{
+         6.461468176353717, -12.525224480602866`}}, {{
+         7.154615356913663, -13.92033321732746}}}]}, {
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               PolygonBox[{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[0.012833333333333334`], 
+                 RGBColor[0.880722, 0.611041, 0.142051], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.72]], {{{2.302585092994046, -4.156532487904885}}, {{
+         2.995732273553991, -5.580002147541177}}, {{
+         3.6888794541139363`, -6.974189587769466}}, {{
+         4.382026634673881, -8.362420806190284}}, {{
+         5.075173815233827, -9.749346724758084}}, {{
+         5.768320995793772, -11.136401264720188`}}, {{
+         6.461468176353717, -12.525224480604548`}}, {{
+         7.154615356913663, -13.920333217465604`}}}]}}}, {{}, {}}}, {
+    DisplayFunction -> Identity, GridLines -> {
+       Charting`ScaledTickValues[{Log, Exp}], 
+       Charting`ScaledTickValues[{Log, Exp}]}, DisplayFunction -> Identity, 
+     DisplayFunction -> Identity, DisplayFunction -> Identity, 
+     DisplayFunction -> Identity, AspectRatio -> 
+     NCache[GoldenRatio^(-1), 0.6180339887498948], Axes -> {True, True}, 
+     AxesLabel -> {None, None}, 
+     AxesOrigin -> {2.0983112494175735`, -14.684406034414474`}, 
+     DisplayFunction :> Identity, Frame -> {{True, True}, {True, True}}, 
+     FrameLabel -> {{
+        FormBox[
+         TagBox["\"Correction error\"", HoldForm], TraditionalForm], None}, {
+        FormBox[
+         TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}}, 
+     FrameTicks -> {{
+        Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+         15.954589770191003`, RotateLabel -> 0], 
+        Charting`ScaledFrameTicks[{Log, Exp}]}, {
+        Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+         15.954589770191003`, RotateLabel -> 0], 
+        Charting`ScaledFrameTicks[{Log, Exp}]}}, GridLines -> {
+       Charting`ScaledTickValues[{Log, Exp}], 
+       Charting`ScaledTickValues[{Log, Exp}]}, GridLinesStyle -> Directive[
+       GrayLevel[0.5, 0.4]], ImageSize -> Large, 
+     Method -> {
+      "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+       "DefaultGraphicsInteraction" -> {
+        "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+         "Effects" -> {
+          "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+           "Droplines" -> {
+            "freeformCursorMode" -> True, 
+             "placement" -> {"x" -> "All", "y" -> "None"}}}}, 
+       "DefaultMeshStyle" -> AbsolutePointSize[6], "DefaultPlotStyle" -> {
+         Directive[
+          RGBColor[0.368417, 0.506779, 0.709798], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.880722, 0.611041, 0.142051], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.560181, 0.691569, 0.194885], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.922526, 0.385626, 0.209179], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.528488, 0.470624, 0.701351], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.772079, 0.431554, 0.102387], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.363898, 0.618501, 0.782349], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[1, 0.75, 0], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.647624, 0.37816, 0.614037], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.571589, 0.586483, 0.], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.915, 0.3325, 0.2125], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[
+          0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+          AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+       "PointSizeFunction" -> "SmallPointSize", "RangePadding" -> 
+       Scaled[0.05], "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> 
+       True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+           Exp[
+            Part[#, 1]], 
+           Exp[
+            Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+           Exp[
+            Part[#, 1]], 
+           Exp[
+            Part[#, 2]]}& )}}, PlotLabel -> 
+     FormBox["\"Feed-forward correction error\"", TraditionalForm], 
+     PlotRange -> {{2.0983112494175735`, 
+      7.154615356913663}, {-14.684406034414474`, -4.156532487904878}}, 
+     PlotRangeClipping -> True, PlotRangePadding -> {{
+        Scaled[0.02], 
+        Scaled[0.02]}, {
+        Scaled[0.02], 
+        Scaled[0.05]}}, Ticks -> {
+       Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+        15.954589770191003`, RotateLabel -> 0], 
+       Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+        15.954589770191003`, RotateLabel -> 0]}}], 
+   FormBox[
+    FormBox[
+     TemplateBox[{
+      "\"Left-acting correction\"", "\"Right-acting correction\""}, 
+      "PointLegend", DisplayFunction -> (FormBox[
+        StyleBox[
+         StyleBox[
+          PaneBox[
+           TagBox[
+            GridBox[{{
+               TagBox[
+                GridBox[{{
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #}, {
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #2}}, 
+                 GridBoxAlignment -> {
+                  "Columns" -> {Center, Left}, "Rows" -> {{Baseline}}}, 
+                 AutoDelete -> False, 
+                 GridBoxDividers -> {
+                  "Columns" -> {{False}}, "Rows" -> {{False}}}, 
+                 GridBoxItemSize -> {"Columns" -> {{All}}, "Rows" -> {{All}}},
+                  GridBoxSpacings -> {
+                  "Columns" -> {{0.5}}, "Rows" -> {{0.8}}}], "Grid"]}}, 
+             GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+             AutoDelete -> False, 
+             GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{1}}, "Rows" -> {{0}}}], 
+            "Grid"], Alignment -> Left, AppearanceElements -> None, 
+           ImageMargins -> {{5, 5}, {5, 5}}, ImageSizeAction -> 
+           "ResizeToFit"], LineIndent -> 0, StripOnInput -> False], {
+         FontFamily -> "Arial"}, Background -> Automatic, StripOnInput -> 
+         False], TraditionalForm]& ), 
+      InterpretationFunction :> (RowBox[{"PointLegend", "[", 
+         RowBox[{
+           RowBox[{"{", 
+             RowBox[{
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", "0.012833333333333334`", "]"}], 
+                   ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.368417, 0.506779, 0.709798]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}], 
+               ",", 
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", "0.012833333333333334`", "]"}], 
+                   ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.880722, 0.611041, 0.142051]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}]}],
+              "}"}], ",", 
+           RowBox[{"{", 
+             RowBox[{#, ",", #2}], "}"}], ",", 
+           RowBox[{"LegendMarkers", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"{", 
+                 RowBox[{
+                   GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}], ",", 
+                   RowBox[{"Offset", "[", "6.272`", "]"}]}], "}"}], "}"}]}], 
+           ",", 
+           RowBox[{"Joined", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"True", ",", "True"}], "}"}]}], ",", 
+           RowBox[{"LabelStyle", "\[Rule]", 
+             RowBox[{"{", "}"}]}], ",", 
+           RowBox[{"LegendLayout", "\[Rule]", "\"Column\""}]}], "]"}]& ), 
+      Editable -> True], TraditionalForm], TraditionalForm]},
+  "Legended",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"], 
+      ItemBox[#2, DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, GridBoxItemSize -> Automatic, 
+    BaselinePosition -> {1, 1}]& ),
+  Editable->True,
+  InterpretationFunction->(RowBox[{"Legended", "[", 
+     RowBox[{#, ",", 
+       RowBox[{"Placed", "[", 
+         RowBox[{#2, ",", "After"}], "]"}]}], "]"}]& )]], "Output",
+ CellChangeTimes->{3.986669429136415*^9},
+ CellLabel->
+  "Out[794]=",ExpressionUUID->"75217412-a335-4731-b1ee-f7c0efcdaf94"],
+
+Cell[BoxData[
+ TemplateBox[{
+   GraphicsBox[{{}, {{{}, {}, {
+        Hue[0.67, 0.6, 0.6], 
+        Directive[
+         PointSize[
+          NCache[
+           Rational[7, 360], 0.019444444444444445`]], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{10., 0.9998773582210715}, {20., 0.9999928839179253}, {40., 
+         0.9999995622099884}, {80., 0.999999972743904}, {160., 
+         0.9999999982986418}, {320., 0.9999999998938354}, {640., 
+         0.999999999993392}, {1280., 0.999999999999615}}]}, {
+        Hue[0.9060679774997897, 0.6, 0.6], 
+        Directive[
+         PointSize[
+          NCache[
+           Rational[7, 360], 0.019444444444444445`]], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{10., 0.9998773582210717}, {20., 0.9999928839179251}, {40., 
+         0.9999995622099884}, {80., 0.9999999727439037}, {160., 
+         0.9999999982986421}, {320., 0.9999999998938354}, {640., 
+         0.999999999993392}, {1280., 0.9999999999996152}}]}}, {{
+        Directive[
+         PointSize[
+          NCache[
+           Rational[7, 360], 0.019444444444444445`]], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               DiskBox[{0, 0}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[
+                  Rational[7, 360]], 
+                 RGBColor[0.368417, 0.506779, 0.709798], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.272]], {{{10., 0.9998773582210715}}, {{20., 
+         0.9999928839179253}}, {{40., 0.9999995622099884}}, {{80., 
+         0.999999972743904}}, {{160., 0.9999999982986418}}, {{320., 
+         0.9999999998938354}}, {{640., 0.999999999993392}}, {{1280., 
+         0.999999999999615}}}]}, {
+        Directive[
+         PointSize[
+          NCache[
+           Rational[7, 360], 0.019444444444444445`]], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               PolygonBox[{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[
+                  Rational[7, 360]], 
+                 RGBColor[0.880722, 0.611041, 0.142051], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.72]], {{{10., 0.9998773582210717}}, {{20., 
+         0.9999928839179251}}, {{40., 0.9999995622099884}}, {{80., 
+         0.9999999727439037}}, {{160., 0.9999999982986421}}, {{320., 
+         0.9999999998938354}}, {{640., 0.999999999993392}}, {{1280., 
+         0.9999999999996152}}}]}}}, {{}, {}}}, {
+    DisplayFunction -> Identity, DisplayFunction -> Identity, AspectRatio -> 
+     NCache[GoldenRatio^(-1), 0.6180339887498948], Axes -> {True, True}, 
+     AxesLabel -> {None, None}, AxesOrigin -> {0, 0.9900000000000022}, 
+     DisplayFunction :> Identity, Frame -> {{True, True}, {True, True}}, 
+     FrameLabel -> {{
+        FormBox[
+         TagBox["\"Correction fidelity\"", HoldForm], TraditionalForm], 
+        None}, {
+        FormBox[
+         TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}}, 
+     FrameTicks -> {{Automatic, Automatic}, {Automatic, Automatic}}, 
+     GridLines -> {Automatic, Automatic}, GridLinesStyle -> Directive[
+       GrayLevel[0.5, 0.4]], ImageSize -> Large, 
+     Method -> {
+      "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+       "DefaultGraphicsInteraction" -> {
+        "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+         "Effects" -> {
+          "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+           "Droplines" -> {
+            "freeformCursorMode" -> True, 
+             "placement" -> {"x" -> "All", "y" -> "None"}}}}, 
+       "DefaultMeshStyle" -> AbsolutePointSize[6], "DefaultPlotStyle" -> {
+         Directive[
+          RGBColor[0.368417, 0.506779, 0.709798], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.880722, 0.611041, 0.142051], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.560181, 0.691569, 0.194885], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.922526, 0.385626, 0.209179], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.528488, 0.470624, 0.701351], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.772079, 0.431554, 0.102387], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.363898, 0.618501, 0.782349], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[1, 0.75, 0], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.647624, 0.37816, 0.614037], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.571589, 0.586483, 0.], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.915, 0.3325, 0.2125], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[
+          0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+          AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+       "RangePadding" -> Scaled[0.05], "OptimizePlotMarkers" -> True, 
+       "OptimizePlotMarkers" -> True, 
+       "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+           Identity[
+            Part[#, 1]], 
+           Identity[
+            Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+           Identity[
+            Part[#, 1]], 
+           Identity[
+            Part[#, 2]]}& )}}, PlotLabel -> 
+     FormBox["\"Feed-forward correction fidelity\"", TraditionalForm], 
+     PlotRange -> {{0, 1280.}, {0.99, 1.000001}}, PlotRangeClipping -> True, 
+     PlotRangePadding -> {{
+        Scaled[0.02], 
+        Scaled[0.02]}, {0, 0}}, Ticks -> {Automatic, Automatic}}], 
+   FormBox[
+    FormBox[
+     TemplateBox[{
+      "\"Left-acting correction\"", "\"Right-acting correction\""}, 
+      "LineLegend", DisplayFunction -> (FormBox[
+        StyleBox[
+         StyleBox[
+          PaneBox[
+           TagBox[
+            GridBox[{{
+               TagBox[
+                GridBox[{{
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #}, {
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #2}}, 
+                 GridBoxAlignment -> {
+                  "Columns" -> {Center, Left}, "Rows" -> {{Baseline}}}, 
+                 AutoDelete -> False, 
+                 GridBoxDividers -> {
+                  "Columns" -> {{False}}, "Rows" -> {{False}}}, 
+                 GridBoxItemSize -> {"Columns" -> {{All}}, "Rows" -> {{All}}},
+                  GridBoxSpacings -> {
+                  "Columns" -> {{0.5}}, "Rows" -> {{0.8}}}], "Grid"]}}, 
+             GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+             AutoDelete -> False, 
+             GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{1}}, "Rows" -> {{0}}}], 
+            "Grid"], Alignment -> Left, AppearanceElements -> None, 
+           ImageMargins -> {{5, 5}, {5, 5}}, ImageSizeAction -> 
+           "ResizeToFit"], LineIndent -> 0, StripOnInput -> False], {
+         FontFamily -> "Arial"}, Background -> Automatic, StripOnInput -> 
+         False], TraditionalForm]& ), 
+      InterpretationFunction :> (RowBox[{"LineLegend", "[", 
+         RowBox[{
+           RowBox[{"{", 
+             RowBox[{
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", 
+                    FractionBox["7", "360"], "]"}], ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.368417, 0.506779, 0.709798]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}], 
+               ",", 
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", 
+                    FractionBox["7", "360"], "]"}], ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.880722, 0.611041, 0.142051]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}]}],
+              "}"}], ",", 
+           RowBox[{"{", 
+             RowBox[{#, ",", #2}], "}"}], ",", 
+           RowBox[{"LegendMarkers", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"{", 
+                 RowBox[{
+                   GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}], ",", 
+                   RowBox[{"Offset", "[", "6.272`", "]"}]}], "}"}], "}"}]}], 
+           ",", 
+           RowBox[{"Joined", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"True", ",", "True"}], "}"}]}], ",", 
+           RowBox[{"LabelStyle", "\[Rule]", 
+             RowBox[{"{", "}"}]}], ",", 
+           RowBox[{"LegendLayout", "\[Rule]", "\"Column\""}]}], "]"}]& ), 
+      Editable -> True], TraditionalForm], TraditionalForm]},
+  "Legended",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"], 
+      ItemBox[#2, DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, GridBoxItemSize -> Automatic, 
+    BaselinePosition -> {1, 1}]& ),
+  Editable->True,
+  InterpretationFunction->(RowBox[{"Legended", "[", 
+     RowBox[{#, ",", 
+       RowBox[{"Placed", "[", 
+         RowBox[{#2, ",", "After"}], "]"}]}], "]"}]& )]], "Output",
+ CellChangeTimes->{3.986669429212016*^9},
+ CellLabel->
+  "Out[796]=",ExpressionUUID->"47605edb-5d0d-4b64-be43-539c81201036"],
+
+Cell[BoxData[
+ TemplateBox[{
+   GraphicsBox[{{}, {{{}, {}, {
+        Hue[0.67, 0.6, 0.6], 
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{10., -34.66424212587934}, {20., -33.55633826986556}, {
+         40., -33.73543607498414}, {80., -32.6379580705281}, {
+         160., -32.9404205573223}, {320., -31.935279001313415`}, {
+         640., -31.659201007593403`}, {1280., -31.060439819212167`}}]}, {
+        Hue[0.9060679774997897, 0.6, 0.6], 
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        LineBox[{{10., -34.67222632746871}, {20., -33.44611272476746}, {
+         40., -33.64886693462422}, {80., -32.63226542564727}, {
+         160., -32.99111728344021}, {320., -31.943161871442197`}, {
+         640., -31.66241595116593}, {1280., -31.060631874297467`}}]}}, {{
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.368417, 0.506779, 0.709798], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               DiskBox[{0, 0}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[0.012833333333333334`], 
+                 RGBColor[0.368417, 0.506779, 0.709798], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.272]], {{{10., -34.66424212587934}}, {{
+         20., -33.55633826986556}}, {{40., -33.73543607498414}}, {{
+         80., -32.6379580705281}}, {{160., -32.9404205573223}}, {{
+         320., -31.935279001313415`}}, {{640., -31.659201007593403`}}, {{
+         1280., -31.060439819212167`}}}]}, {
+        Directive[
+         PointSize[0.012833333333333334`], 
+         RGBColor[0.880722, 0.611041, 0.142051], 
+         AbsoluteThickness[1.6]], 
+        GeometricTransformationBox[
+         InsetBox[
+          BoxData[
+           FormBox[
+            StyleBox[
+             GraphicsBox[{
+               EdgeForm[], 
+               PolygonBox[{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}]}], 
+             GraphicsBoxOptions -> {DefaultBaseStyle -> Directive[
+                 PointSize[0.012833333333333334`], 
+                 RGBColor[0.880722, 0.611041, 0.142051], 
+                 AbsoluteThickness[1.6]]}, StripOnInput -> False], 
+            TraditionalForm]], {0., 0.}, Automatic, 
+          Offset[6.72]], {{{10., -34.67222632746871}}, {{
+         20., -33.44611272476746}}, {{40., -33.64886693462422}}, {{
+         80., -32.63226542564727}}, {{160., -32.99111728344021}}, {{
+         320., -31.943161871442197`}}, {{640., -31.66241595116593}}, {{
+         1280., -31.060631874297467`}}}]}}}, {{}, {}}}, {
+    DisplayFunction -> Identity, GridLines -> {Automatic, 
+       Charting`ScaledTickValues[{Log, Exp}]}, DisplayFunction -> Identity, 
+     DisplayFunction -> Identity, DisplayFunction -> Identity, 
+     DisplayFunction -> Identity, AspectRatio -> 
+     NCache[GoldenRatio^(-1), 0.6180339887498948], Axes -> {True, True}, 
+     AxesLabel -> {None, None}, AxesOrigin -> {0, -34.95486911873602}, 
+     DisplayFunction :> Identity, Frame -> {{True, True}, {True, True}}, 
+     FrameLabel -> {{
+        FormBox[
+         TagBox["\"Corrected-gate unitarity residual\"", HoldForm], 
+         TraditionalForm], None}, {
+        FormBox[
+         TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}}, 
+     FrameTicks -> {{
+        Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+         15.954589770191003`, RotateLabel -> 0], 
+        Charting`ScaledFrameTicks[{Log, Exp}]}, {Automatic, Automatic}}, 
+     GridLines -> {Automatic, 
+       Charting`ScaledTickValues[{Log, Exp}]}, GridLinesStyle -> Directive[
+       GrayLevel[0.5, 0.4]], ImageSize -> Large, 
+     Method -> {
+      "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+       "DefaultGraphicsInteraction" -> {
+        "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+         "Effects" -> {
+          "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+           "Droplines" -> {
+            "freeformCursorMode" -> True, 
+             "placement" -> {"x" -> "All", "y" -> "None"}}}}, 
+       "DefaultMeshStyle" -> AbsolutePointSize[6], "DefaultPlotStyle" -> {
+         Directive[
+          RGBColor[0.368417, 0.506779, 0.709798], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.880722, 0.611041, 0.142051], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.560181, 0.691569, 0.194885], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.922526, 0.385626, 0.209179], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.528488, 0.470624, 0.701351], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.772079, 0.431554, 0.102387], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.363898, 0.618501, 0.782349], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[1, 0.75, 0], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.647624, 0.37816, 0.614037], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.571589, 0.586483, 0.], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.915, 0.3325, 0.2125], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[
+          0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+          AbsoluteThickness[1.6]], 
+         Directive[
+          RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+          AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+       "PointSizeFunction" -> "SmallPointSize", "RangePadding" -> 
+       Scaled[0.05], "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> 
+       True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+           Identity[
+            Part[#, 1]], 
+           Exp[
+            Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+           Identity[
+            Part[#, 1]], 
+           Exp[
+            Part[#, 2]]}& )}}, PlotLabel -> 
+     FormBox["\"Corrected-gate unitarity residual\"", TraditionalForm], 
+     PlotRange -> {{0, 1280.}, {-34.95486911873602, -31.060439819212167`}}, 
+     PlotRangeClipping -> True, PlotRangePadding -> {{
+        Scaled[0.02], 
+        Scaled[0.02]}, {
+        Scaled[0.02], 
+        Scaled[0.05]}}, Ticks -> {Automatic, 
+       Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+        15.954589770191003`, RotateLabel -> 0]}}], 
+   FormBox[
+    FormBox[
+     TemplateBox[{"\"Left corrected gate\"", "\"Right corrected gate\""}, 
+      "PointLegend", DisplayFunction -> (FormBox[
+        StyleBox[
+         StyleBox[
+          PaneBox[
+           TagBox[
+            GridBox[{{
+               TagBox[
+                GridBox[{{
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.368417, 0.506779, 0.709798], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #}, {
+                   GraphicsBox[{{
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    LineBox[{{0, 6.272}, {20, 6.272}}]}}, {
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]], {
+                    InsetBox[
+                    GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}, {DefaultBaseStyle -> {"Graphics", {
+                    AbsolutePointSize[6]}, 
+                    Directive[
+                    EdgeForm[
+                    Directive[
+                    Opacity[0.3], 
+                    GrayLevel[0]]], 
+                    PointSize[0.5], 
+                    RGBColor[0.880722, 0.611041, 0.142051], 
+                    AbsoluteThickness[1.6]]}}], 
+                    NCache[
+                    Scaled[{
+                    Rational[1, 2], 
+                    Rational[1, 2]}], 
+                    Scaled[{0.5, 0.5}]], Automatic, 
+                    Scaled[1]]}}}, AspectRatio -> Full, 
+                    ImageSize -> {20, 6.272}, PlotRangePadding -> None, 
+                    ImagePadding -> Automatic, 
+                    BaselinePosition -> (Scaled[-0.08426020408163262] -> 
+                    Baseline)], #2}}, 
+                 GridBoxAlignment -> {
+                  "Columns" -> {Center, Left}, "Rows" -> {{Baseline}}}, 
+                 AutoDelete -> False, 
+                 GridBoxDividers -> {
+                  "Columns" -> {{False}}, "Rows" -> {{False}}}, 
+                 GridBoxItemSize -> {"Columns" -> {{All}}, "Rows" -> {{All}}},
+                  GridBoxSpacings -> {
+                  "Columns" -> {{0.5}}, "Rows" -> {{0.8}}}], "Grid"]}}, 
+             GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+             AutoDelete -> False, 
+             GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{1}}, "Rows" -> {{0}}}], 
+            "Grid"], Alignment -> Left, AppearanceElements -> None, 
+           ImageMargins -> {{5, 5}, {5, 5}}, ImageSizeAction -> 
+           "ResizeToFit"], LineIndent -> 0, StripOnInput -> False], {
+         FontFamily -> "Arial"}, Background -> Automatic, StripOnInput -> 
+         False], TraditionalForm]& ), 
+      InterpretationFunction :> (RowBox[{"PointLegend", "[", 
+         RowBox[{
+           RowBox[{"{", 
+             RowBox[{
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", "0.012833333333333334`", "]"}], 
+                   ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.368417, 0.506779, 0.709798]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}], 
+               ",", 
+               RowBox[{"Directive", "[", 
+                 RowBox[{
+                   RowBox[{"PointSize", "[", "0.012833333333333334`", "]"}], 
+                   ",", 
+                   
+                   TemplateBox[<|
+                    "color" -> RGBColor[0.880722, 0.611041, 0.142051]|>, 
+                    "RGBColorSwatchTemplate"], ",", 
+                   RowBox[{"AbsoluteThickness", "[", "1.6`", "]"}]}], "]"}]}],
+              "}"}], ",", 
+           RowBox[{"{", 
+             RowBox[{#, ",", #2}], "}"}], ",", 
+           RowBox[{"LegendMarkers", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"{", 
+                 RowBox[{
+                   GraphicsBox[{
+                    EdgeForm[], 
+                    DiskBox[{0, 0}]}], ",", 
+                   RowBox[{"Offset", "[", "6.272`", "]"}]}], "}"}], "}"}]}], 
+           ",", 
+           RowBox[{"Joined", "\[Rule]", 
+             RowBox[{"{", 
+               RowBox[{"True", ",", "True"}], "}"}]}], ",", 
+           RowBox[{"LabelStyle", "\[Rule]", 
+             RowBox[{"{", "}"}]}], ",", 
+           RowBox[{"LegendLayout", "\[Rule]", "\"Column\""}]}], "]"}]& ), 
+      Editable -> True], TraditionalForm], TraditionalForm]},
+  "Legended",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"], 
+      ItemBox[#2, DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, GridBoxItemSize -> Automatic, 
+    BaselinePosition -> {1, 1}]& ),
+  Editable->True,
+  InterpretationFunction->(RowBox[{"Legended", "[", 
+     RowBox[{#, ",", 
+       RowBox[{"Placed", "[", 
+         RowBox[{#2, ",", "After"}], "]"}]}], "]"}]& )]], "Output",
+ CellChangeTimes->{3.986669429235805*^9},
+ CellLabel->
+  "Out[798]=",ExpressionUUID->"bf7c2596-8a41-47b4-bdab-13cd0ea88183"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {{{}, {}, 
+     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+      0.012833333333333334`], AbsoluteThickness[1.6], 
+      LineBox[{{10., -34.98665642752391}, {20., -33.7002783026269}, {
+       40., -33.53990068857349}, {80., -32.677548035883554`}, {
+       160., -33.0034008321678}, {320., -31.930416801241652`}, {
+       640., -31.67284542700274}, {1280., -31.05812701976788}}]}}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`],
+      AbsoluteThickness[1.6], GeometricTransformationBox[InsetBox[
+       FormBox[
+        StyleBox[
+         GraphicsBox[
+          {EdgeForm[None], DiskBox[{0, 0}]}],
+         StripOnInput->False,
+         GraphicsBoxOptions->{DefaultBaseStyle->Directive[
+           PointSize[0.012833333333333334`], 
+           RGBColor[0.368417, 0.506779, 0.709798], 
+           AbsoluteThickness[1.6]]}],
+        TraditionalForm], {0., 0.}, Automatic, Offset[6.272]], {{{
+      10., -34.98665642752391}}, {{20., -33.7002783026269}}, {{
+      40., -33.53990068857349}}, {{80., -32.677548035883554`}}, {{
+      160., -33.0034008321678}}, {{320., -31.930416801241652`}}, {{
+      640., -31.67284542700274}}, {{1280., -31.05812701976788}}}]}}, {{}, {}}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{None, None},
+  AxesOrigin->{0, -35.294086148202474`},
+  DisplayFunction->Identity,
+  Frame->{{True, True}, {True, True}},
+  FrameLabel->{{
+     FormBox[
+      TagBox["\"Estimated holonomy unitarity residual\"", HoldForm], 
+      TraditionalForm], None}, {
+     FormBox[
+      TagBox["\"Number of steps N\"", HoldForm], TraditionalForm], None}},
+  FrameTicks->FrontEndValueCache[{{
+      Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+       15.954589770191003`, RotateLabel -> 0], 
+      Charting`ScaledFrameTicks[{Log, Exp}]}, {
+     Automatic, Automatic}}, {{{{-35.23192357547063, 
+        FormBox[
+         TemplateBox[{"\[Times]", "\"\[Times]\"", "5", 
+           TemplateBox[{"10", 
+             RowBox[{"-", "16"}]}, "Superscript", SyntaxForm -> 
+            SuperscriptBox]}, "RowWithSeparators"], StandardForm], {0.01, 
+        0.}}, {-34.538776394910684`, 
+        FormBox[
+         TemplateBox[{"\[Times]", "\"\[Times]\"", "1", 
+           TemplateBox[{"10", 
+             RowBox[{"-", "15"}]}, "Superscript", SyntaxForm -> 
+            SuperscriptBox]}, "RowWithSeparators"], StandardForm], {0.01, 
+        0.}}, {-32.92933848247659, 
+        FormBox[
+         TemplateBox[{"\[Times]", "\"\[Times]\"", "5", 
+           TemplateBox[{"10", 
+             RowBox[{"-", "15"}]}, "Superscript", SyntaxForm -> 
+            SuperscriptBox]}, "RowWithSeparators"], StandardForm], {0.01, 
+        0.}}, {-32.23619130191664, 
+        FormBox[
+         TemplateBox[{"\[Times]", "\"\[Times]\"", "1", 
+           TemplateBox[{"10", 
+             RowBox[{"-", "14"}]}, "Superscript", SyntaxForm -> 
+            SuperscriptBox]}, "RowWithSeparators"], StandardForm], {0.01, 
+        0.}}, {-36.841361487904734`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-36.14821430734479, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-35.74274919923662, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-35.45506712678484, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-35.04960201867667, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-34.89545133884942, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-34.76191994622489, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-34.64413691056851, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-33.84562921435074, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-33.44016410624258, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-33.1524820337908, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.74701692568263, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.59286624585537, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.45933485323085, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.34155181757447, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-31.543044121356694`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-31.13757901324853, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.84989694079675, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.626753389482538`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.444431832688586`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.290281152861326`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.156749760236803`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.03896672458042, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-29.933606208922594`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}}, {{-35.23192357547063, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.01, 
+        0.}}, {-34.538776394910684`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.01, 
+        0.}}, {-32.92933848247659, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.01, 
+        0.}}, {-32.23619130191664, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.01, 
+        0.}}, {-36.841361487904734`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-36.14821430734479, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-35.74274919923662, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-35.45506712678484, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-35.04960201867667, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-34.89545133884942, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-34.76191994622489, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-34.64413691056851, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-33.84562921435074, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-33.44016410624258, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-33.1524820337908, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.74701692568263, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.59286624585537, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.45933485323085, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-32.34155181757447, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-31.543044121356694`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-31.13757901324853, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.84989694079675, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.626753389482538`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.444431832688586`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.290281152861326`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.156749760236803`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-30.03896672458042, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 
+        0.}}, {-29.933606208922594`, 
+        FormBox[
+         TemplateBox[{0, 0}, "Spacer2"], StandardForm], {0.005, 0.}}}}, {
+     Automatic, Automatic}}],
+  GridLines->FrontEndValueCache[{Automatic, 
+     Charting`ScaledTickValues[{Log, Exp}]}, {Automatic, {{-35.23192357547063, 
+       Directive[]}, {-34.538776394910684`, 
+       Directive[]}, {-32.92933848247659, 
+       Directive[]}, {-32.23619130191664, 
+       Directive[]}}}],
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  ImageSize->Large,
+  Method->{
+   "AxisPadding" -> Scaled[0.02], "DefaultBoundaryStyle" -> Automatic, 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "DefaultMeshStyle" -> 
+    AbsolutePointSize[6], "DefaultPlotStyle" -> {
+      Directive[
+       RGBColor[0.368417, 0.506779, 0.709798], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.880722, 0.611041, 0.142051], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.560181, 0.691569, 0.194885], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.922526, 0.385626, 0.209179], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.528488, 0.470624, 0.701351], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.772079, 0.431554, 0.102387], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.363898, 0.618501, 0.782349], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[1, 0.75, 0], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.647624, 0.37816, 0.614037], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.571589, 0.586483, 0.], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.915, 0.3325, 0.2125], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.40082222609352647`, 0.5220066643438841, 0.85], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.9728288904374106, 0.621644452187053, 0.07336199581899142], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.736782672705901, 0.358, 0.5030266573755369], 
+       AbsoluteThickness[1.6]], 
+      Directive[
+       RGBColor[0.28026441037696703`, 0.715, 0.4292089322474965], 
+       AbsoluteThickness[1.6]]}, "DomainPadding" -> Scaled[0.02], 
+    "PointSizeFunction" -> "SmallPointSize", "RangePadding" -> Scaled[0.05], 
+    "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, 
+    "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+        Identity[
+         Part[#, 1]], 
+        Exp[
+         Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+        Identity[
+         Part[#, 1]], 
+        Exp[
+         Part[#, 2]]}& )}},
+  PlotLabel->FormBox[
+   "\"Estimated holonomy unitarity residual\"", TraditionalForm],
+  PlotRange->{{0, 1280.}, {-35.294086148202474`, -31.05812701976788}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.05]}},
+  Ticks->{Automatic, 
+    Charting`ScaledTicks[{Log, Exp}, {Log, Exp}, "Nice", WorkingPrecision -> 
+     15.954589770191003`, RotateLabel -> 0]}]], "Output",
+ CellChangeTimes->{3.986669429260456*^9},
+ CellLabel->
+  "Out[800]=",ExpressionUUID->"90387e1c-f9be-4052-b62d-945319156f36"],
+
+Cell[BoxData["\<\"04_feedforward_correction.nb \
+completed.\\n\\nPurpose:\\nValidate non-Abelian feed-forward correction for \
+both left-acting and right-acting geometric distortions.\\n\\nSynthetic \
+holonomy:\\nGenerated from the non-Abelian connection A(t) = i [0.7 cos(t) \
+sigma_x + 0.4 sin(2t) sigma_y + 0.2 sigma_z].\\nThe ODE reference is \
+projected to the nearest unitary by polar decomposition before constructing \
+the effective gates.\\n\\nLeft-acting convention:\\nV_eff = U_gamma V, V_corr \
+= Uhat^dagger V_eff.\\n\\nRight-acting convention:\\nV_eff = V U_gamma, \
+V_corr = V_eff Uhat^dagger.\\n\\nExpected behavior:\\nHolonomy-estimation \
+error should decrease under mesh refinement.\\nLeft and right correction \
+errors should decrease under mesh refinement.\\nCorrection fidelities should \
+approach 1.\\nUnitarity residuals should remain near machine \
+precision.\\n\\nFit summary:\\n<|\\\"holonomy_log_log_slope\\\" -> \
+-2.0085454156994187, \\\"holonomy_estimated_order\\\" -> 2.0085454156994187, \
+\\\"left_correction_log_log_slope\\\" -> -2.0085454156911657, \
+\\\"left_correction_estimated_order\\\" -> 2.0085454156911657, \
+\\\"right_correction_log_log_slope\\\" -> -2.008545415707916, \
+\\\"right_correction_estimated_order\\\" -> \
+2.008545415707916|>\\n\\nReference \
+diagnostics:\\n<|\\\"ode_reference_unitarity_error_before_polar_projection\\\"\
+ -> 5.347411632239695*^-8, \
+\\\"true_holonomy_unitarity_error_after_polar_projection\\\" -> \
+3.925231146709438*^-17, \\\"target_gate_unitarity_error\\\" -> \
+3.3823104336622004*^-16, \\\"left_effective_gate_unitarity_error\\\" -> \
+2.8576114088871287*^-16, \\\"right_effective_gate_unitarity_error\\\" -> \
+4.827396019292964*^-16, \\\"true_holonomy_eigenphases\\\" -> \
+{-0.7013416583093253, 0.7013416583093254}, \
+\\\"true_holonomy_wilson_traces_r1_r2_r3\\\" -> {1.527954358309696 + \
+5.551115123125783*^-17*I, 0.33464452107759485 + 0.*I, -1.016632803844724 - \
+1.1102230246251565*^-16*I}|>\\n\\nGenerated \
+files:\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-\
+and-feed-forward-for-time-bin-qudits/results/tables/04_feedforward_correction.\
+csv\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables/04_feedforward_correction_\
+numeric.csv\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-\
+calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_\
+holonomy_error.pdf\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-\
+calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_\
+holonomy_error.png\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-\
+calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_\
+correction_error.pdf\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-\
+calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_\
+correction_error.png\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-\
+calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_feedforward_\
+correction_fidelity.pdf\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-\
+holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/04_\
+feedforward_correction_fidelity.png\\n/Users/njblost/GitHub/Non-Abelian-\
+Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/\
+figs/04_feedforward_corrected_unitarity.pdf\\n/Users/njblost/GitHub/Non-\
+Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/\
+results/figs/04_feedforward_corrected_unitarity.png\\n/Users/njblost/GitHub/\
+Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-\
+qudits/results/figs/04_feedforward_holonomy_unitarity.pdf\\n/Users/njblost/\
+GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-\
+bin-qudits/results/figs/04_feedforward_holonomy_unitarity.png\\n\\nProject \
+root:\\n/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-\
+and-feed-forward-for-time-bin-qudits\"\>"], "Print",
+ CellChangeTimes->{3.986669430210236*^9},
+ CellLabel->
+  "During evaluation of \
+In[742]:=",ExpressionUUID->"7cf96ba6-521d-4a00-ab37-00c1741c9a7e"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"ode_reference_unitarity_error_before_polar_projection\"\>", 
+    "\[Rule]", "5.347411632239695`*^-8"}], ",", 
+   RowBox[{"\<\"true_holonomy_unitarity_error_after_polar_projection\"\>", 
+    "\[Rule]", "3.925231146709438`*^-17"}], ",", 
+   RowBox[{"\<\"initial_holonomy_error\"\>", "\[Rule]", 
+    "0.01566177125422161`"}], ",", 
+   RowBox[{"\<\"final_holonomy_error\"\>", "\[Rule]", 
+    "9.004842008081888`*^-7"}], ",", 
+   RowBox[{"\<\"initial_left_correction_error\"\>", "\[Rule]", 
+    "0.01566177125422166`"}], ",", 
+   RowBox[{"\<\"final_left_correction_error\"\>", "\[Rule]", 
+    "9.004842008687451`*^-7"}], ",", 
+   RowBox[{"\<\"initial_left_correction_fidelity\"\>", "\[Rule]", 
+    "0.9998773582210715`"}], ",", 
+   RowBox[{"\<\"final_left_correction_fidelity\"\>", "\[Rule]", 
+    "0.999999999999615`"}], ",", 
+   RowBox[{"\<\"initial_right_correction_error\"\>", "\[Rule]", 
+    "0.015661771254221548`"}], ",", 
+   RowBox[{"\<\"final_right_correction_error\"\>", "\[Rule]", 
+    "9.004842007443491`*^-7"}], ",", 
+   RowBox[{"\<\"initial_right_correction_fidelity\"\>", "\[Rule]", 
+    "0.9998773582210717`"}], ",", 
+   RowBox[{"\<\"final_right_correction_fidelity\"\>", "\[Rule]", 
+    "0.9999999999996152`"}], ",", 
+   RowBox[{"\<\"holonomy_estimated_order\"\>", "\[Rule]", 
+    "2.0085454156994187`"}], ",", 
+   RowBox[{"\<\"left_correction_estimated_order\"\>", "\[Rule]", 
+    "2.0085454156911657`"}], ",", 
+   RowBox[{"\<\"right_correction_estimated_order\"\>", "\[Rule]", 
+    "2.008545415707916`"}], ",", 
+   RowBox[{"\<\"full_csv\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables/04_feedforward_correction.csv\
+\"\>"}], ",", 
+   RowBox[{"\<\"numeric_csv\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/tables/04_feedforward_correction_\
+numeric.csv\"\>"}], ",", 
+   RowBox[{"\<\"holonomy_error_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/04_feedforward_holonomy_error.\
+pdf\"\>"}], ",", 
+   RowBox[{"\<\"correction_error_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/04_feedforward_correction_error.\
+pdf\"\>"}], ",", 
+   RowBox[{"\<\"correction_fidelity_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/04_feedforward_correction_\
+fidelity.pdf\"\>"}], ",", 
+   RowBox[{"\<\"corrected_unitarity_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/04_feedforward_corrected_\
+unitarity.pdf\"\>"}], ",", 
+   RowBox[{"\<\"holonomy_unitarity_plot_pdf\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/figs/04_feedforward_holonomy_\
+unitarity.pdf\"\>"}], ",", 
+   RowBox[{"\<\"log\"\>", 
+    "\[Rule]", \
+"\<\"/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-\
+feed-forward-for-time-bin-qudits/results/logs/04_feedforward_correction_log.\
+txt\"\>"}]}], "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.9866694302118473`*^9},
+ CellLabel->
+  "Out[817]=",ExpressionUUID->"35f06012-28bc-4632-9ad4-c86424f94943"]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, -2182}, {-41, Automatic}},
+FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (April 11, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"acf2a81e-5bcd-44ca-82f6-d3860e89c011"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 38324, 951, 6226, "Input",ExpressionUUID->"e3625213-42b9-4503-a6ef-93e1050ca83f"],
+Cell[CellGroupData[{
+Cell[38929, 977, 542, 14, 63, "Print",ExpressionUUID->"dc8dcd65-17a6-4829-81a9-b5e166c9e4d2"],
+Cell[39474, 993, 575, 14, 63, "Print",ExpressionUUID->"44823ea8-5eac-41d1-842e-37b4c4218d73"],
+Cell[40052, 1009, 569, 14, 63, "Print",ExpressionUUID->"07abd3c1-6cdf-4ad1-a901-e1569b02c638"],
+Cell[40624, 1025, 571, 14, 63, "Print",ExpressionUUID->"374821ff-ebbd-4ae1-9f75-02b42cabac48"]
+}, Open  ]],
+Cell[41210, 1042, 1488, 31, 164, "Output",ExpressionUUID->"70e6718c-45c0-4a3a-aabc-99c6e0d99bef"],
+Cell[42701, 1075, 3633, 82, 211, "Output",ExpressionUUID->"c525e3c9-9628-4bcd-8192-c4a7ed2eb0b5"],
+Cell[46337, 1159, 2609, 49, 211, "Output",ExpressionUUID->"b5f78739-4111-4057-a08a-5524544ee534"],
+Cell[48949, 1210, 844, 17, 77, "Output",ExpressionUUID->"883c9ad5-b06d-4527-96e6-7137aca300a0"],
+Cell[49796, 1229, 30623, 749, 394, "Output",ExpressionUUID->"8cc785b8-4be0-4b67-aded-b1903a1bba7a"],
+Cell[80422, 1980, 15506, 355, 396, "Output",ExpressionUUID->"75217412-a335-4731-b1ee-f7c0efcdaf94"],
+Cell[95931, 2337, 14165, 333, 401, "Output",ExpressionUUID->"47605edb-5d0d-4b64-be43-539c81201036"],
+Cell[110099, 2672, 14550, 333, 384, "Output",ExpressionUUID->"bf7c2596-8a41-47b4-bdab-13cd0ea88183"],
+Cell[124652, 3007, 12590, 310, 382, "Output",ExpressionUUID->"90387e1c-f9be-4052-b62d-945319156f36"],
+Cell[137245, 3319, 4208, 60, 1317, "Print",ExpressionUUID->"7cf96ba6-521d-4a00-ab37-00c1741c9a7e"],
+Cell[141456, 3381, 3650, 75, 737, "Output",ExpressionUUID->"35f06012-28bc-4632-9ad4-c86424f94943"]
+}, Open  ]]
+}
+]
+*)
+

@@ -1,0 +1,20 @@
+01_gauge_covariance.nb completed.
+
+Purpose:
+Validate closed-loop gauge covariance of the polar holonomy estimator.
+
+Expected behavior:
+Gauge covariance residuals should be near machine precision.
+Unitarity residuals should be near machine precision.
+The minimum overlap singular value should remain safely separated from zero.
+
+Generated files:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/01_gauge_covariance.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/01_gauge_covariance_numeric.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_residuals.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_residuals.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_conditioning.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/01_gauge_covariance_conditioning.png
+
+Project root:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits

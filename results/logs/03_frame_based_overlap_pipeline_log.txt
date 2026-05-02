@@ -1,0 +1,56 @@
+03_frame_based_overlap_pipeline.nb completed.
+
+Purpose:
+Validate the complete frame-to-overlap-to-polar-holonomy pipeline using an exact analytic frame-loop reference.
+
+Frame path:
+Rank-2 tangent frame on a sphere at fixed polar angle theta0.
+theta0 = 0.7
+cos(theta0) = 0.764842
+
+Exact connection:
+A_phi = {{0, -cos(theta0)}, {cos(theta0), 0}}.
+
+Exact reference holonomy:
+U_ref = Exp[-2 Pi A_phi].
+
+Pipeline:
+1. Sample frames Phi_k.
+2. Construct overlaps M_k = Phi_k^dagger Phi_{k+1}.
+3. Compute W_k = polar(M_k).
+4. Use T_k = W_k^dagger.
+5. Form Uhat = T_{N-1} ... T_0.
+
+Expected behavior:
+Frobenius error to the exact reference should decrease under mesh refinement.
+Unitarity residual should remain near machine precision.
+Minimum singular value should remain bounded away from zero.
+Max projector step distance should decrease under refinement.
+
+Log-log fit:
+slope = -2.00065
+estimated order = 2.00065
+
+Reference diagnostics:
+<|"theta0" -> 0.7, "cos_theta0" -> 0.7648421872844885, "exact_connection_Aphi" -> {{0., -0.7648421872844885}, {0.7648421872844885, 0.}}, "reference_unitarity_error" -> 5.887846720064157*^-17, "reference_eigenphases" -> {-1.4775401137225905, 1.4775401137225905}, "reference_wilson_traces_r1_r2_r3" -> {0.18624220257686608, -1.9653138419793177, -0.5522665812618972}|>
+
+Sanity check:
+<|"test_closure_error" -> 3.0835658686920554*^-16, "test_max_frame_orthonormality_error" -> 3.236828524569469*^-16, "test_min_overlap_singular_value" -> 0.9796876501920252|>
+
+Generated files:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/03_frame_based_overlap_pipeline.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/03_frame_based_overlap_pipeline_numeric.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/03_frame_based_eigenphase_convergence.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_overlap_convergence.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_overlap_convergence.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_unitarity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_unitarity.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_conditioning.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_conditioning.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_projector_step_distance.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_projector_step_distance.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_eigenphase_convergence.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/03_frame_based_eigenphase_convergence.png
+
+Project root:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits

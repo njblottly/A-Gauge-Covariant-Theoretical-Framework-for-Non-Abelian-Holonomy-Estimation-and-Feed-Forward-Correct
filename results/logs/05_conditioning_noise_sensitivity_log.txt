@@ -1,0 +1,50 @@
+05_conditioning_noise_sensitivity.nb completed.
+
+Purpose:
+Validate conditioning dependence of the polar holonomy estimator under noisy overlap matrices.
+
+Baseline:
+Rank-2 tangent-frame loop with N_base = 80.
+Base minimum singular value = 0.998721.
+
+Controlled conditioning construction:
+Each clean overlap is replaced by polar(M_k) . DiagonalMatrix[{1, mu}], so the polar factor is unchanged while the smallest singular value is controlled.
+
+Scaled-noise test:
+eta = rho * mu_min.
+Expected behavior: mean holonomy error scales approximately linearly with rho = eta/mu_min for small perturbations.
+
+Fixed-eta test:
+eta =    1
+-------
+1000000.
+Expected behavior: mean holonomy error increases as mu_min decreases.
+
+Trials per point:
+20
+
+Scaled-noise slope table:
+{{0.95, 0.9499999999999997, 0.994712640503972, 0.994712640503972}, {0.7, 0.7, 1.0174542133178999, 1.0174542133178999}, {0.5, 0.4999999999999999, 0.9469789208636373, 0.9469789208636373}, {0.3, 0.29999999999999993, 1.0660735082528079, 1.0660735082528079}, {0.15, 0.15, 0.9827462579908893, 0.9827462579908893}}
+
+Fixed-eta fit summary:
+<|"fixed_eta" -> 1/1000000, "log_log_slope_error_vs_inverse_mu" -> 0.3644515184119498|>
+
+Base diagnostics:
+<|"n_base" -> 80, "base_min_singular_value" -> 0.9987206428555113, "base_unitarity_error" -> 8.018071306342336*^-15, "base_eigenphases" -> {-1.4765148199856373, 1.4765148199856373}, "base_wilson_traces_r1_r2_r3" -> {0.18828378156806824, -1.9645492175984391, -0.558176537334093}|>
+
+Generated files:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/05_conditioning_noise_sensitivity_scaled.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/05_conditioning_noise_sensitivity_slopes.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/05_conditioning_noise_sensitivity_fixed_eta.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/05_frame_derived_noise_sensitivity.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_noise_error_vs_scaled_noise.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_noise_error_vs_scaled_noise.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_noise_error_fixed_eta_conditioning.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_noise_error_fixed_eta_conditioning.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_noise_unitarity_residual.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_noise_unitarity_residual.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_frame_baseline_noise_sensitivity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/05_frame_baseline_noise_sensitivity.png
+
+Project root:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits

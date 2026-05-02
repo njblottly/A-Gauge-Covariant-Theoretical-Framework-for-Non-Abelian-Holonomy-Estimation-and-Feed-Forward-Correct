@@ -1,0 +1,36 @@
+02_nonabelian_convergence.nb completed.
+
+Purpose:
+Validate convergence of the discrete ordered-product holonomy estimator against a continuum reference solution.
+
+Synthetic connection:
+A(t) = i [0.7 cos(t) sigma_x + 0.4 sin(2 t) sigma_y + 0.2 sigma_z].
+
+Continuum equation:
+U'(t) = -A(t) U(t), U(0) = I.
+
+Expected behavior:
+Frobenius error to the continuum reference should decrease under mesh refinement.
+Unitarity residual should remain near machine precision.
+Eigenphases should stabilize as N increases.
+
+Log-log fit:
+slope = -2.00849
+estimated order = 2.00849
+
+Reference diagnostics:
+<|"reference_unitarity_error" -> 5.347411632239695*^-8, "reference_eigenphases" -> {-0.7013416583093254, 0.7013416583093254}, "reference_wilson_traces_r1_r2_r3" -> {1.5279543294222593 + 0.*I, 0.33464450842404625 + 0.*I, -1.0166327461834823 + 0.*I}|>
+
+Generated files:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/02_nonabelian_convergence.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/02_nonabelian_convergence_numeric.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/02_nonabelian_eigenphase_convergence.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/02_nonabelian_convergence.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/02_nonabelian_convergence.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/02_nonabelian_unitarity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/02_nonabelian_unitarity.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/02_nonabelian_eigenphase_convergence.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/02_nonabelian_eigenphase_convergence.png
+
+Project root:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits

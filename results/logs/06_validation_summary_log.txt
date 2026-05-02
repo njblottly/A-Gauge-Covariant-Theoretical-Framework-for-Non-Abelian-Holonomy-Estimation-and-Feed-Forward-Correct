@@ -1,0 +1,30 @@
+06_validation_summary.nb completed.
+
+Purpose:
+Aggregate validation outputs from notebooks 01--05.
+
+Overall validation status:
+PASS
+
+Validation checks:
+<|"gauge_covariance_residual_small" -> True, "gauge_unitarity_residual_small" -> True, "nonabelian_error_decreases" -> True, "frame_pipeline_error_decreases" -> True, "frame_projector_step_decreases" -> True, "left_correction_error_decreases" -> True, "right_correction_error_decreases" -> True, "left_final_fidelity_near_one" -> True, "right_final_fidelity_near_one" -> True, "scaled_noise_slopes_near_one" -> True|>
+
+Paper metrics:
+{{"result", "value"}, {"max gauge covariance residual", 9.54180670278024*^-15}, {"max gauge-run unitarity residual", 1.4462699960145175*^-14}, {"non-Abelian convergence order", 2.008490030704305}, {"non-Abelian error N_min", 0.015661771106194062}, {"non-Abelian error N_max", 9.008810419080525*^-7}, {"frame-pipeline convergence order", 2.000645142347237}, {"frame-pipeline error N_min", 0.09320009376342507}, {"frame-pipeline error N_max", 5.6635751712933615*^-6}, {"frame-pipeline min overlap singular value", 0.920738915091769}, {"feed-forward holonomy convergence order", 2.0085454156994187}, {"left correction convergence order", 2.0085454156911657}, {"right correction convergence order", 2.008545415707916}, {"left final correction fidelity", 0.999999999999615}, {"right final correction fidelity", 0.9999999999996152}, {"mean scaled-noise slope", 1.0015931081858414}, {"fixed-eta conditioning slope", 0.36445151841198653}}
+
+Generated files:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/06_validation_summary_key_metrics.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/tables/06_validation_summary_paper_metrics.csv
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_convergence_tests.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_convergence_tests.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_unitarity_residuals.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_unitarity_residuals.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_correction_infidelity.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_correction_infidelity.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_noise_slopes.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_noise_slopes.png
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_projector_refinement.pdf
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits/results/figs/06_summary_projector_refinement.png
+
+Project root:
+/Users/njblost/GitHub/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits
