@@ -1,4 +1,4 @@
-# Contributing to timebin-berry-phase
+# Contributing to Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits
 
 Thanks for thinking about contributing! This repository contains Mathematica (Wolfram Language) notebooks and a headless exporter that produces the figures and tables used in our manuscript.
 
@@ -15,8 +15,8 @@ Please read and follow our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). By particip
 ## Repository layout (what goes where)
 
 - `src/` — runnable source
-  - `run-all.wls` (headless exporter)
-  - `notebooks_run-all WLS/` — notebooks executed by the exporter
+  - `HolonomyTools.wl` (headless exporter)
+  - `notebooks_HolonomyTools.wl/` — notebooks executed by the exporter
   - optional: shared utilities as `*.wl`
 - `notebooks/` — exploratory or illustrative notebooks **not** run in batch
 - `results/` — curated outputs we keep in version control
@@ -36,8 +36,8 @@ Please read and follow our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). By particip
    ```bash
    git checkout -b feat/short-description
 2. **Run the exporter** (macOS path shown; adjust if needed):
-- /Applications/Mathematica.app/Contents/MacOS/WolframKernel -script src/run-all.wls
+- /Applications/Mathematica.app/Contents/MacOS/WolframKernel -script src/HolonomyTools.wls
 	- To run a specific notebook:
-- /Applications/Mathematica.app/Contents/MacOS/WolframKernel -script src/run-all.wls wavefunctionplot.nb
+- /Applications/Mathematica.app/Contents/MacOS/WolframKernel -script src/HolonomyTools.wls 02_nonabelian_convergence.nb
 	- Outputs appear under src/results/figs/, src/results/tables/, and logs in src/results/logs/.
 3. Commit only curated outputs you intend to keep (see “What to commit” below), then open a Pull Request (PR).
