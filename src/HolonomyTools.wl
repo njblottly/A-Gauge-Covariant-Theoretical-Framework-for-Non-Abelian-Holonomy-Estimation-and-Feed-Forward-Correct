@@ -1,11 +1,12 @@
 (* ::Package:: *)
 
 (* ::Package:: *)
+(**)
+
 
 (* HolonomyTools.wl
    Shared utilities for:
-   Gauge-Covariant Holonomy Estimation and Feed-Forward Correction
-   for Time-Bin Photonic Qudits
+   A Gauge-Covariant Theoretical Framework for Non-Abelian Holonomy Estimation and Feed-Forward Correction in Time-Bin Photonic Qudits
 *)
 
 ClearAll["Global`*"];

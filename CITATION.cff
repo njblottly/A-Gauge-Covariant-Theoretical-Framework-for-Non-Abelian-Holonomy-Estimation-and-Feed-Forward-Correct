@@ -1,16 +1,16 @@
 cff-version: 1.0.0
 message: "If you use this code, please cite the software release below; when the article is published, please cite that as well."
-title: "Gauge-Covariant Holonomy Estimation and Feed-Forward Correction for Time-Bin Photonic Qudits"
+title: "A Gauge-Covariant Theoretical Framework for Non-Abelian Holonomy Estimation and Feed-Forward Correction in Time-Bin Photonic Qudits"
 authors:
   - family-names: Bruzzese
     given-names: Nicholas Josef
     # orcid: https://orcid.org/0009-0004-9993-5953
 version: 1.0.0
 commit:
-doi:
-date-released: 2025-08-01
+doi: 10.5281/zenodo.19945688
+date-released: 2026-01-11
 license: MIT
-repository-code: https://github.com/njblottly/Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits
+repository-code: https://github.com/njblottly/A-Gauge-Covariant-Theoretical-Framework-for-Non-Abelian-Holonomy-Estimation-and-Feed-Forward-Correct
 repository-artifact: 
 keywords:
   - time-bin photonics
@@ -22,16 +22,16 @@ keywords:
 abstract: "This theoretical work develops a gauge-covariant algorithm for estimating and correcting non-Abelian geometric holonomies in transported time-bin photonic qudit subspaces. It extends prior Abelian Pancharatnam--Berry phase feed-forward calibration from scalar bin-resolved phases to matrix-valued Wilczek--Zee holonomies, using polar-decomposed overlap matrices, consistency and stability guarantees, and reproducible Mathematica validation protocols."
 preferred-citation:
   type: software
-  title: "Gauge-Covariant Holonomy Estimation and Feed-Forward Correction for Time-Bin Photonic Qudits"
+  title: "A Gauge-Covariant Theoretical Framework for Non-Abelian Holonomy Estimation and Feed-Forward Correction in Time-Bin Photonic Qudits"
   authors:
     - family-names: Bruzzese
       given-names: Nicholas Josef
   version: 1.0.0
-  doi: 
+  doi: 10.5281/zenodo.19945688
   date-released: 2026
 references:
   - type: article
-    title: "Gauge-Covariant Holonomy Estimation and Feed-Forward Correction for Time-Bin Photonic Qudits"
+    title: "A Gauge-Covariant Theoretical Framework for Non-Abelian Holonomy Estimation and Feed-Forward Correction in Time-Bin Photonic Qudits"
     authors:
       - family-names: Bruzzese
         given-names: Nicholas Josef

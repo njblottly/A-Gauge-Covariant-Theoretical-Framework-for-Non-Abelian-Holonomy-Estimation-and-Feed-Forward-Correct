@@ -1,10 +1,10 @@
-# Reproducibility Notes — Non-Abelian Holonomy Estimation for Time-bin Photonic Qudits
+# Reproducibility Notes — A-Gauge-Covariant-Theoretical-Framework-for-Non-Abelian-Holonomy-Estimation-and-Feed-Forward-Correct
 
-This repository accompanies the manuscript **“Gauge-Covariant Holonomy Estimation and Feed-Forward Correction for Time-Bin Photonic Qudits.”**
+This repository accompanies the manuscript **“A-Gauge-Covariant-Theoretical-Framework-for-Non-Abelian-Holonomy-Estimation-and-Feed-Forward-Correct.”**
 
 It contains Wolfram Mathematica / Wolfram Language scripts and notebooks that reproduce the paper’s synthetic theoretical validation checks, including gauge covariance, non-Abelian path ordering, mesh-refinement convergence, conditioning diagnostics, and feed-forward correction fidelity.
 
-This repository supports a **purely theoretical** manuscript. The generated data are synthetic validation outputs, not experimental measurements.
+This repository supports a theoretical manuscript. The generated data are synthetic validation outputs, not experimental measurements.
 
 ---
 
@@ -244,4 +244,4 @@ The headless validation pipeline is intended to reproduce the algorithmic checks
 
 When using this repository, please cite the accompanying manuscript:
 
-**“Gauge-Covariant Holonomy Estimation and Feed-Forward Correction for Time-Bin Photonic Qudits.”**
+**“A-Gauge-Covariant-Theoretical-Framework-for-Non-Abelian-Holonomy-Estimation-and-Feed-Forward-Correct.”**

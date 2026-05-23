@@ -1,4 +1,4 @@
-# Contributing to Non-Abelian-Wilczek-Zee-holonomy-calibration-and-feed-forward-for-time-bin-qudits
+# Contributing to A Gauge-Covariant Theoretical Framework for Non-Abelian Holonomy Estimation and Feed-Forward Correction in Time-Bin Photonic Qudits
 
 Thanks for thinking about contributing! This repository contains Mathematica (Wolfram Language) notebooks and a headless exporter that produces the figures and tables used in our manuscript.
 
